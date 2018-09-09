@@ -2,6 +2,8 @@ import discord
 import sqlite3
 from discord.ext import commands
 import random
+import SECRETS
+from SECRETS import TOKEN
 
 # Set up logging
 
@@ -95,7 +97,7 @@ async def buy_ship(ctx):
 		em = discord.Embed(title=ctx.author.name,description="You don't have enough money")
 		await ctx.send(embed = em)
 
-bot.run("NDg0MjA0MzAxODYyODMwMDkw.DmemNw.AYqV7dtez3hf4j5mfcKB3r97Vdg")
+bot.run(TOKEN)
 
 #Omega Cafe
 #bot.run("NDM0MTMyOTA1NDgwOTQ1Njc0.DhOAow.Zj5Kzkv_n-NjjPq8bQQWxMh2Kr0")
