@@ -24,11 +24,6 @@ for extension in extensions:
 async def on_command_completion(ctx):
     await ctx.message.delete()
 
-@bot.listen()
-async def on_member_join(member):
-		role = discord.utils.get("Member")
-		await member.add_roles(role)
-
 @bot.event
 async def on_ready():
 	print(f"Logged in as {bot.user.name}")
@@ -70,3 +65,8 @@ async def balance(ctx):
 async def top(ctx):
 	Alpha = c.execute("SELECT * FROM bank ORDER BY balance DESC").fetchall()
 	await ctx.send(Alpha[:10])
+
+bot.run("NDg0MjA0MzAxODYyODMwMDkw.DmemNw.AYqV7dtez3hf4j5mfcKB3r97Vdg")
+
+#Omega Cafe
+#bot.run("NDM0MTMyOTA1NDgwOTQ1Njc0.DhOAow.Zj5Kzkv_n-NjjPq8bQQWxMh2Kr0")
