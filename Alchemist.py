@@ -42,7 +42,7 @@ conn.commit()
 
 @bot.command()
 async def register(ctx):
-	c.execute("INSERT INTO bank VALUES(?, ?)",(ctx.author.id, 0))
+	c.execute("INSERT INTO bank VALUES(?, ?, ?, ?, ?)",(ctx.author.id, 1.0 , 1, ctx.author.name , "extra"))
 	conn.commit()
 
 #@commands.cooldown(1, 30, commands.BucketType.user)
@@ -52,19 +52,48 @@ async def work(ctx):
 	y = Balance[0]
 	z = y[0]
 	x = 1
-	Boxed = (x *)+ z 
-	c.execute("UPDATE bank SET balance=? WHERE user_id=?",(Boxed,ctx.author.id))
+	ships2 = c.execute("SELECT shipcount FROM bank WHERE User_ID = ?",(ctx.author.id,)).fetchall()
+	ships1 = ships2[0]
+	ships = ships1[0]
+	Boxed = (5 * int(ships)) + int(z) 
+	c.execute("UPDATE bank SET balance=? WHERE user_id=?",(int(Boxed),ctx.author.id))
 	conn.commit()
 
 @bot.command()
-async def balance(ctx):
+async def bal(ctx):
 	Balance = c.execute("SELECT Balance FROM bank WHERE User_ID = ?",(ctx.author.id,)).fetchall()
-	await ctx.send(Balance)
+	n = Balance[0]
+	m = n[0]
+	em = discord.Embed(title=f"{ctx.author.name}, your balance is:",description=f"${m}")
+	await ctx.send(embed=em)
 
 @bot.command()
 async def top(ctx):
 	Alpha = c.execute("SELECT * FROM bank ORDER BY balance DESC").fetchall()
 	await ctx.send(Alpha[:10])
+
+@bot.group(invoke_without_command=True)
+async def buy(ctx):
+	pass
+
+@buy.command(name = "ship")
+async def buy_ship(ctx):
+	Balance = c.execute("SELECT Balance FROM bank WHERE User_ID = ?",(ctx.author.id,)).fetchall()
+	ships = c.execute("SELECT shipcount FROM bank WHERE User_ID = ?",(ctx.author.id,)).fetchall()
+	n = Balance[0]
+	o = ships[0]
+	m = n[0]
+	p = o[0]
+	if m >= 200 * p:
+		z = m - 500 * p
+		q = p + 1
+		c.execute("UPDATE bank SET balance=? WHERE user_id=?",(z,ctx.author.id))
+		conn.commit()
+		c.execute("UPDATE bank SET shipcount=? WHERE user_id=?",(q,ctx.author.id))
+		conn.commit()
+	else:
+		em = discord.Embed(title=ctx.author.name,description="You don't have enough money")
+		await ctx.send(embed = em)
 
 bot.run("NDg0MjA0MzAxODYyODMwMDkw.DmemNw.AYqV7dtez3hf4j5mfcKB3r97Vdg")
 
