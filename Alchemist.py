@@ -248,7 +248,7 @@ async def help(ctx):
 		await ctx.send(embed = em)
 		
 """
-with open("/home/pi/Desktop/TheAlchemist/Token.txt") as fp:
+with open("Token.txt") as fp:
     token = fp.read().strip()
 
 bot.run(token)
