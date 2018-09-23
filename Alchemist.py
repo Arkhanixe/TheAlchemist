@@ -2,8 +2,6 @@ import discord
 import sqlite3
 from discord.ext import commands
 import random
-import SECRETS
-from SECRETS import TOKEN
 import datetime
 from some_paginator import Paginator
 import time
@@ -221,6 +219,7 @@ async def help(ctx):
 		await ctx.send(embed = em)
 		
 """
+TOKEN = "NDg0MjA0MzAxODYyODMwMDkw.DncsxQ.sPg8HnkgdZLlS3NshIFsCTlqOwk"
 bot.run(TOKEN)
 
 #Omega Cafe
