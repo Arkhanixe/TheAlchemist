@@ -64,6 +64,17 @@ async def dm(ctx, id: discord.User, message):
 	embed = discord.Embed(title="Message",description=f"Dear User. You have a message. Here it is: \n {message}")
 	await id.send(embed=embed)
 
+@bot.command(aliases=["ut"])
+async def uptime(ctx):
+    delta_uptime = datetime.utcnow() - bot.launch_time
+    hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
+    minutes, seconds = divmod(remainder, 60)
+    days, hours = divmod(hours, 24)
+    weeks, days = divmod(days, 7)
+    embed = discord.Embed(color=0xE9A72F)
+    embed.add_field(name="Alchemist Uptime :calendar_spiral:", value=f"Weeks: **{weeks}**\nDays: **{days}**\nHours: **{hours}**\nMinutes: **{minutes}**\nSeconds: **{seconds}**")
+    await ctx.send(embed=embed)
+
 @bot.command()
 async def remmes(ctx, number: int = None):
       if ctx.author.id != 462351034384252938:
