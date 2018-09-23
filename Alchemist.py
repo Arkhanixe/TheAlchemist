@@ -98,7 +98,7 @@ async def suggest(ctx, *, msg):
     x = ctx.bot.get_channel(492274127709929482)
     embed = discord.Embed(title="Suggestion",description=f"{ctx.author.name} | ID : {ctx.author.id} | has sent suggestion | {msg}")
     await x.send(embed=embed)
-    em = discord.Embed(title="Suggestion sent",description=f"Message : \n {msg} \n was sent")
+    em = discord.Embed(title="Suggestion sent",description=f"Message was sent")
     await ctx.send(embed=em)
 
 @bot.listen()
