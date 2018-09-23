@@ -103,10 +103,10 @@ async def suggest(ctx, *, msg):
 
 @bot.listen()
 async def on_message(message):
-    if message.guild.me in message.mentions:
-    	xprefix = c.execute("SELECT prefix FROM my_prefix WHERE guild_id = ?",(message.guild.id,)).fetchall()
-    	y = xprefix[0]
-    	await message.channel.send(f"You probaly want my prefix! Here you go: {y[0]}")
+	if message.guild.me in message.mentions:
+		xprefix = c.execute("SELECT prefix FROM my_prefix WHERE guild_id = ?",(message.guild.id,)).fetchall()
+		y = xprefix[0]
+		await message.channel.send(f"You probaly want my prefix! Here you go: {y[0]}")
 
 	if isinstance(message.channel, discord.DMChannel):
 			channelid = client.get_channel(493279692175179776)
