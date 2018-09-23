@@ -107,8 +107,8 @@ async def on_message(message):
     	xprefix = c.execute("SELECT prefix FROM my_prefix WHERE guild_id = ?",(message.guild.id,)).fetchall()
     	y = xprefix[0]
     	await message.channel.send(f"You probaly want my prefix! Here you go: {y[0]}")
-    	
-    if isinstance(message.channel, discord.DMChannel):
+
+	if isinstance(message.channel, discord.DMChannel):
 			channelid = client.get_channel(493279692175179776)
 			em_dm = discord.Embed(colour=0x0000FF)
 			em_dm.set_author(name=f"Message ID: {message.id}",icon_url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtcb5rrDHigYWUiULXW4plUlUI-4w4-wVtL8PpU8Bbg4ejnFBhgg")
