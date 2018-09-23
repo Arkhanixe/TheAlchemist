@@ -48,6 +48,17 @@ bot = commands.Bot(command_prefix=(get_prefix))
 bot.remove_command("help")
 
 @bot.command()
+async def server(ctx):
+	embed = discord.Embed(title="Server Invite",description="***The Alchemist Workshop***\nThe Alchemist Workshop is a server that helps people learn about bots. We are starting up right now but we will build ourselves up! We are encourage helpfulness as well as becoming an ally with other people in the community.\n\n***We Offer***:\n- Helping make discord bots\n- Language tutorials\n- Custom economy system\n- Server is made how the users want it to be made\n- Self promotion\n\n***Invite Link***:\n\nhttps://discord.gg/wmEtZtG\n\n***Bot Invite***\n\nhttps://discordapp.com/api/oauth2/authorize?client_id=484204301862830090&permissions=-1&scope=bot\n")
+	await ctx.send(embed=embed)
+
+@bot.command()
+async def dance(ctx):
+	embed=discord.Embed()
+	embed.set_image(url="https://media.discordapp.net/attachments/462497054430593035/493287977552969735/Konosuba_dbab24_6194110.gif")
+	await ctx.send(embed=embed)
+
+@bot.command()
 @commands.is_owner()
 async def dm(ctx, id: discord.User, message):
 	embed = discord.Embed(title="Message",description=f"Dear User. You have a message. Here it is: \n {message}")
@@ -237,8 +248,10 @@ async def help(ctx):
 		await ctx.send(embed = em)
 		
 """
-TOKEN = "NDg0MjA0MzAxODYyODMwMDkw.DncsxQ.sPg8HnkgdZLlS3NshIFsCTlqOwk"
-bot.run(TOKEN)
+with open("Desktop/TheAlchemist/Token.txt") as fp:
+    token = fp.read().strip()
+    
+bot.run(token)
 
 #Omega Cafe
 #bot.run("NDM0MTMyOTA1NDgwOTQ1Njc0.DhOAow.Zj5Kzkv_n-NjjPq8bQQWxMh2Kr0")
