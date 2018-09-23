@@ -141,7 +141,7 @@ async def on_message(message):
 			await channelid.send(embed=em_dm)
 
 	if message.content.startswith("Alchemist prefix"):
-		xprefix = c.execute("SELECT prefix FROM my_prefix WHERE guild_id = ?",(ctx.guild.id,)).fetchall()
+		xprefix = c.execute("SELECT prefix FROM my_prefix WHERE guild_id = ?",(message.guild.id,)).fetchall()
 		await message.channel.send(xprefix[0])
 
 
