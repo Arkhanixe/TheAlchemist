@@ -51,7 +51,7 @@ bot.remove_command("help")
 @commands.is_owner()
 async def message(ctx,member: discord.Member,*,message):
 	embed = discord.Embed(title="Message",description=f"Dear User. You have a message. Here it is: \n {message}")
-	
+
 @bot.command()
 async def remmes(ctx, number: int = None):
       if ctx.author.id != 462351034384252938:
@@ -94,7 +94,9 @@ async def save(ctx,*args):
 
 @bot.command()
 async def suggest(ctx, *, msg):
-    await ctx.bot.get_channel(492274127709929482) .send(f'{ctx.author.name} | ID = {ctx.author.id} : {msg}')
+    await ctx.bot.get_channel(492274127709929482)
+    embed = discord.Embed(title="Suggestion",description=f"{ctx.author.name} | ID : {ctx.author.id} has sent Suggestion {msg}")
+    x.send(embed=embed)
     await ctx.send('your suggestion sent successfully!')
 
 @bot.listen()
