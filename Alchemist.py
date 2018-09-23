@@ -73,8 +73,8 @@ async def uptime(ctx):
     minutes, seconds = divmod(remainder, 60)
     days, hours = divmod(hours, 24)
     weeks, days = divmod(days, 7)
-    embed = discord.Embed(color=0xE9A72F)
-    embed.add_field(name="Alchemist Uptime :calendar_spiral:", value=f"Weeks: **{weeks}**\nDays: **{days}**\nHours: **{hours}**\nMinutes: **{minutes}**\nSeconds: **{seconds}**")
+    embed = discord.Embed(color=0x0000FF)
+    embed.add_field(name="Alchemist Uptime", value=f"Weeks: **{weeks}**\nDays: **{days}**\nHours: **{hours}**\nMinutes: **{minutes}**\nSeconds: **{seconds}**")
     await ctx.send(embed=embed)
 
 @bot.command()
