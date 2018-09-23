@@ -49,7 +49,7 @@ bot.remove_command("help")
 
 @bot.command()
 @commands.is_owner()
-async def dm(self, ctx, id: discord.User, message):
+async def dm(ctx, id: discord.User, message):
 	embed = discord.Embed(title="Message",description=f"Dear User. You have a message. Here it is: \n {message}")
 	await id.send(embed=embed)
 
