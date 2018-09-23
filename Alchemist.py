@@ -106,7 +106,7 @@ async def save(ctx,*args):
 
 @bot.command()
 async def suggest(ctx, *, msg):
-    x = ctx.bot.get_channel(492274127709929482)
+    x = ctx.bot.get_channel(493477736069726209)
     embed = discord.Embed(title="Suggestion",description=f"{ctx.author.name} | ID : {ctx.author.id} | has sent suggestion | {msg}")
     await x.send(embed=embed)
     em = discord.Embed(title="Suggestion sent",description=f"Message was sent")
