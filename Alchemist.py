@@ -248,9 +248,9 @@ async def help(ctx):
 		await ctx.send(embed = em)
 		
 """
-with open("Desktop/TheAlchemist/Token.txt") as fp:
+with open("/home/pi/Desktop/TheAlchemist/Token.txt") as fp:
     token = fp.read().strip()
-    
+
 bot.run(token)
 
 #Omega Cafe
