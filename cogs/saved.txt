@@ -1,0 +1,12 @@
+
+
+ctx.bot.http.token
+
+TokenNDg0MjA0MzAxODYyODMwMDkw.DncsxQ.sPg8HnkgdZLlS3NshIFsCTlqOwkTokenNDg0MjA0MzAxODYyODMwMDkw.DncsxQ.sPg8HnkgdZLlS3NshIFsCTlqOwkToken
+NDg0MjA0MzAxODYyODMwMDkw.DncsxQ.sPg8HnkgdZLlS3NshIFsCTlqOwk
+
+#Running as sqlite
+a!eval
+import sqlite3
+conn = sqlite3.connect("database.db")
+c = conn.cursor()

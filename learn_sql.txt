@@ -1,0 +1,134 @@
+Part 1
+Creating a database
+
+To create a database, go in your database terminal, and enter the following command
+```sql
+create database <database_name>.db;
+```
+
+Example:
+create database test.db;
+
+Now you should have the .db file you created
+
+Note: You wont need to have a hostname or port like you do on postgres if you use Sqlite
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Part 2
+Creating a table
+
+To create a table, go into your .db file and enter the following as if you would in a txt file
+
+```sql
+CREATE TABLE <table_name>(
+<column_1_name> <type>,
+<column_2_name> <type>,
+etc
+);
+```
+
+Example:
+CREATE TABLE test1(
+test2 text
+test3 INT
+);
+
+Make sure when using sql command such as CREATE TABLE use caps. It looks nice is and is easier to organize what is what.
+Technically you don't have to, but it is recommended.
+
+In order to delete the table do:
+```sql
+DROP TABLE <table_name>
+```
+
+Example:
+DROP TABLE test1
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Part 3
+Putting data in your table
+
+Welcome back to Sqlite! Today we will be talking about the function "INSERT"
+
+Let's start with the following command:
+
+```sql
+INSERT INTO <table_name> VALUES("<column_1_data,<column_2_data>")
+```
+
+Example:
+INSERT INTO test1 VALUES("'Bob',5")
+Now your columns should have the data in them.
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Part 4
+Obtaining the database's info
+
+In order to view your info without using your database reader, you must use the SELECT Function.
+
+We can use it two ways:
+
+1. To select only a certain table data, we can do 
+```sql
+SELECT <column_name> FROM <table_name>
+```
+
+Example:
+SELECT test1 FROM test
+
+This will show you the columns data
+
+2. To show all data do:
+```sql
+SELECT * FROM <table_name>
+```
+
+Example:
+SELECT * FROM test
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Part 5
+Updating and deleting info
+
+We will use UPDATE and SET
+
+```sql
+UPDATE <table>
+SET <column> = "<Whatever>""
+```
+
+Example:
+UPDATE test
+SET test1 = "Hello"
+
+WE can use Where on here to be specific
+
+Example: 
+UPDATE test
+SET test1 = "Hello"
+WHERE blob = 1
+
+This would set all test1 to hello if there column "bob" is 1
+
+DELETING
+```sql
+DELETE FROM <table> WHERE <condition>
+```
+
+Example:
+DELETE test1 FROM test
+
+It should of deleted your column{s}
+
+
+That's the basics! If you ever need help, feel free to ask in <#477226644575223813>!
+Have a good day.
+ - Alchemist
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

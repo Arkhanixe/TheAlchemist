@@ -17,6 +17,7 @@ from discord import opus
 from datetime import datetime
 from discord.ext import commands
 from contextlib import redirect_stdout
+from some_paginator import Paginator
 
 class test:
     def __init__(self, bot):
@@ -48,6 +49,7 @@ class test:
             'author': ctx.message.author,
             'guild': ctx.guild,
             'message': ctx.message
+
         }
 
         env.update(globals())
@@ -60,7 +62,8 @@ class test:
         try:
             exec(to_compile, env)
         except SyntaxError as e:
-            return await ctx.send(self.get_syntax_error(e))
+            embed = discord.Embed(description=f"{self.get_syntax_error(e)},")
+            return await ctx.send(embed=embed)
 
         func = env['func']
         try:
@@ -68,22 +71,30 @@ class test:
                 ret = await func()
         except Exception as e:
             value = stdout.getvalue()
-            await ctx.send('{}{}\n'.format(value, traceback.format_exc()))
+            embed = discord.Embed(description = "{}{}\n".format(value,traceback.format_exc()),color=0x20b2aa)
+            await ctx.send(embed=embed)
         else:
             value = stdout.getvalue()
             try:
                 await ctx.message.add_reaction('\u2705')
             except Exception as e:
-                await ctx.send(e)
+                embed = discord.Embed(description=f"{e}")
+                await ctx.send(embed=embed)
 
-            Arb = await ctx.send('%s%s\n' % (value, ret))
+            em = discord.Embed(description = "%s%s\n" % (value,ret),color=0x20b2aa)
+            Arb = await ctx.send(embed=em)
             if ret is None:
                 if value:
-                    Arb = await ctx.send("%s\n" % value)
+                    embed = discord.Embed(description="%s\n" % value,color=0x20b2aa)
+                    Arb = await ctx.send(embed=embed)
                 else:
                     self._last_result = ret
-                    Arb = await ctx.send('%s%s\n' % (value, ret))
+                    pager = Paginator(bot)
 
+                    embed = f"{value}{ret}"
+                    await pager.embed_generator_send(ctx, embed,color=0x20b2aa)
+                    #Arb = await ctx.send(embed=embed)
+"""
             pag = commands.Paginator()
             out = Arb.split('\n')
             for i in out:
@@ -93,7 +104,9 @@ class test:
                     pag.close_page()
                     pag.add_line(line=i)
             for i in pag.pages:
-                await ctx.send(i)
+                embed = discord.Embed(description=i)
+                await ctx.send(embed=embed)
+"""
 
 def setup(bot):
     bot.add_cog(test(bot))

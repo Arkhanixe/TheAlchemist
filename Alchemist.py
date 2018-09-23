@@ -4,17 +4,120 @@ from discord.ext import commands
 import random
 import SECRETS
 from SECRETS import TOKEN
+import datetime
+from some_paginator import Paginator
+import time
 
 # Set up logging
 
 extensions = {
 'cogs.cmds',
 "cogs.commands",
-"cogs.admin"
+"cogs.admin",
+"cogs.REPL",
+"cogs.help"
 }   # add more here later
 
-bot = commands.Bot(command_prefix='a!')
 
+"""def get_prefix(bot, message):
+#    """#A callable Prefix for our bot. This could be edited to allow per server prefixes."""
+
+    # Notice how you can use spaces in prefixes. Try to keep them simple though.
+   # prefixes = ['>?', 'lol ', '!?']
+
+    # Check to see if we are outside of a guild. e.g DM's etc.
+   # if not message.guild:
+        # Only allow ? to be used in DMs
+       # return '?'
+conn = sqlite3.connect("database.db")
+c = conn.cursor()
+
+
+
+def get_prefix(bot,ctx):
+	if not ctx.guild:
+		return "a!"
+	else:
+		xprefix = c.execute("SELECT prefix FROM my_prefix WHERE guild_id = ?",(ctx.guild.id,)).fetchall()
+		if xprefix == None:
+			return "a!"
+		if xprefix == []:
+			return "a!"
+		else:
+			return xprefix[0]
+
+bot = commands.Bot(command_prefix=(get_prefix))
+bot.remove_command("help")
+
+@bot.command()
+async def remmes(ctx, number: int = None):
+      if ctx.author.id != 462351034384252938:
+        return False
+        
+      deleted = await ctx.channel.purge(
+        limit = number + 1
+        )
+
+      await ctx.send(
+        "Force Removed {} message(s)".format(
+          len(
+            deleted
+            )
+          ),delete_after=15
+        )
+
+@bot.command()
+async def ping(ctx):
+    # Time the time required to send a message first.
+    # This is the time taken for the message to be sent, awaited, and then 
+    # for discord to send an ACK TCP header back to you to say it has been
+    # received; this is dependant on your bot's load (the event loop latency)
+    # and generally how shit your computer is, as well as how badly discord
+    # is behaving.
+    start = time.monotonic()
+    msg = await ctx.send('Pinging...')
+    millis = (time.monotonic() - start) * 1000
+
+    # Since sharded bots will have more than one latency, this will average them if needed.
+    heartbeat = ctx.bot.latency * 1000
+
+    await msg.edit(content=f'Heartbeat: {heartbeat:,.2f}ms\tACK: {millis:,.2f}ms.')
+
+@bot.command()
+async def save(ctx,*args):
+	with open("Desktop/Alchemistsaved.txt","a") as f:
+		f.write(args[0])
+		f.write("\n\n")
+
+@bot.command()
+async def suggest(ctx, *, msg):
+    await ctx.bot.get_channel(492274127709929482) .send(f'{ctx.author.name} : {msg}')
+    await ctx.send('your suggestion sent successfully!')
+
+@bot.listen()
+async def on_message(message):
+    if message.guild.me in message.mentions:
+    	xprefix = c.execute("SELECT prefix FROM my_prefix WHERE guild_id = ?",(message.guild.id,)).fetchall()
+    	y = xprefix[0]
+    	await message.channel.send(f"You probaly want my prefix! Here you go: {y[0]}")
+
+
+@bot.event
+async def on_command_error(ctx,error):
+	embed = discord.Embed(title="Command Error",description=error)
+	print(error)
+
+@bot.command()
+async def setprefix(ctx,theprefix):
+	x = c.execute("SELECT prefix FROM my_prefix WHERE guild_id=?",(ctx.guild.id,)).fetchall()
+	if x != [] or None:
+		c.execute("UPDATE my_prefix SET prefix = ? WHERE guild_id = ?",(theprefix,ctx.guild.id))
+		conn.commit()
+	else:
+		c.execute("INSERT INTO my_prefix VALUES(?,?)",(theprefix,ctx.guild.id))
+		conn.commit()
+
+	await ctx.send(f"Your prefix is now {theprefix}")
 # If we fail to load an extension, we just leave it out.
 for extension in extensions:
 	try:
@@ -24,7 +127,10 @@ for extension in extensions:
 
 @bot.event
 async def on_command_completion(ctx):
-    await ctx.message.delete()
+	try:
+		await ctx.message.delete()
+	except:
+		pass
 
 @bot.event
 async def on_ready():
@@ -35,8 +141,19 @@ async def on_ready():
 	await bot.change_presence(status=discord.Status.online,activity=game)
 	print(f"Playing {game}")
 
-conn = sqlite3.connect("database.db")
-c = conn.cursor()
+@bot.listen()
+async def on_member_join(ctx,member: discord.Member):
+  embed=discord.Embed(timestamp = datetime.datetime.utcnow())
+  embed.add_field(name="Name",value=member,inline=True)
+  embed.add_field(name="Creation",value=member.created_at,inline=True)
+  embed.color: 3447003
+  embed.set_thumbnail(url=member.avatar_url)
+  a = discord.utils.get(ctx.guild.channels, name="general")
+  b = discord.utils.get(ctx.guild.channels, name="testing")
+  try:
+  	a.send(embed=embed)
+  except:
+  	b.send(embed=embed)
 
 c.execute("CREATE TABLE IF NOT EXISTS bank(User_ID BIGINT NOT NULL, Balance float)")
 conn.commit()
@@ -96,7 +213,14 @@ async def buy_ship(ctx):
 	else:
 		em = discord.Embed(title=ctx.author.name,description="You don't have enough money")
 		await ctx.send(embed = em)
-
+"""
+@bot.group(invoke_without_command=True)
+async def help(ctx):
+	for command in bot.commands:
+		em = discord.Embed(title="Alchemist Help Menu",description=command_S)
+		await ctx.send(embed = em)
+		
+"""
 bot.run(TOKEN)
 
 #Omega Cafe
