@@ -49,9 +49,9 @@ bot.remove_command("help")
 
 @bot.command()
 @commands.is_owner()
-async def message(ctx,member: discord.Member,*,message):
+async def dm(self, ctx, id: discord.User, message):
 	embed = discord.Embed(title="Message",description=f"Dear User. You have a message. Here it is: \n {message}")
-	await ctx.send(embed=embed)
+	await id.send(embed=embed)
 
 @bot.command()
 async def remmes(ctx, number: int = None):
@@ -125,6 +125,7 @@ async def setprefix(ctx,theprefix):
 		conn.commit()
 
 	await ctx.send(f"Your prefix is now {theprefix}")
+
 # If we fail to load an extension, we just leave it out.
 for extension in extensions:
 	try:
