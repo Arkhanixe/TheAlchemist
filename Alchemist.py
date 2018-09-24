@@ -180,7 +180,7 @@ async def on_command_completion(ctx):
 @commands.is_owner()
 @bot.command()
 async def restart(ctx):
-	os.system(git pull)
+	os.system("git pull")
 	with open("Token.txt") as fp:
 		token = fp.read().strip()
 
