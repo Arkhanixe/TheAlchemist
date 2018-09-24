@@ -133,7 +133,7 @@ async def on_message(message):
 		await message.channel.send(f"You probaly want my prefix! Here you go: {y[0]}")
 	"""
 	if isinstance(message.channel, discord.DMChannel):
-			channelid = bot.get_channel(493279692175179776)
+			channelid = bot.get_channel(493774930169823242)
 			em_dm = discord.Embed(colour=0x0000FF)
 			em_dm.set_author(name=f"Message ID: {message.id}",icon_url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtcb5rrDHigYWUiULXW4plUlUI-4w4-wVtL8PpU8Bbg4ejnFBhgg")
 			em_dm.add_field(name="Content",value=f"{message.content}")
