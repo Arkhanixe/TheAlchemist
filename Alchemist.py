@@ -6,6 +6,7 @@ import datetime
 from datetime import datetime
 from some_paginator import Paginator
 import time
+import os
 
 # Set up logging
 
@@ -179,7 +180,7 @@ async def on_command_completion(ctx):
 @commands.is_owner()
 @bot.command()
 async def restart(ctx):
-	git pull
+	os.system(git pull)
 	with open("Token.txt") as fp:
 		token = fp.read().strip()
 
