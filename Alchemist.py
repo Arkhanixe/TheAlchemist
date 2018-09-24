@@ -137,7 +137,7 @@ async def on_message(message):
 			em_dm = discord.Embed(colour=0x0000FF)
 			em_dm.set_author(name=f"Message ID: {message.id}",icon_url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtcb5rrDHigYWUiULXW4plUlUI-4w4-wVtL8PpU8Bbg4ejnFBhgg")
 			em_dm.add_field(name="Content",value=f"{message.content}")
-			em_dm.set_footer(text=f"Sent by {message.author}")
+			em_dm.set_footer(text=f"Sent by {message.author} | ID = {message.author.id}")
 			await channelid.send(embed=em_dm)
 
 	if message.content.startswith("Alchemist prefix"):
