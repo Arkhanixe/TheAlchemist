@@ -192,7 +192,7 @@ async def on_ready():
 	print(f"Logged in as {bot.user.name}")
 	print(f"ID : {bot.user.id}")
 	print(f"Preparing Game")
-	game = discord.Game(f" Nothing | Guild Count: {len(bot.guild)}")
+	game = discord.Game(f" Nothing | Guild Count: {len(bot.guilds)}")
 	await bot.change_presence(status=discord.Status.online,activity=game)
 	print(f"Playing {game}")
 
