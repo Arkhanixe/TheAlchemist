@@ -176,6 +176,17 @@ async def on_command_completion(ctx):
 	except:
 		pass
 
+@commands.is_owner()
+@bot.command()
+async def restart(ctx):
+	await bot.logout()
+
+		with open("Token.txt") as fp:
+			token = fp.read().strip()
+
+	bot.run(token)
+
+
 @bot.event
 async def on_ready():
 	print(f"Logged in as {bot.user.name}")
