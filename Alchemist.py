@@ -181,8 +181,8 @@ async def on_command_completion(ctx):
 async def restart(ctx):
 	await bot.logout()
 
-		with open("Token.txt") as fp:
-			token = fp.read().strip()
+	with open("Token.txt") as fp:
+		token = fp.read().strip()
 
 	bot.run(token)
 
