@@ -223,8 +223,23 @@ async def on_member_join(member: discord.Member):
   embed.add_field(name="Creation",value=member.created_at,inline=True)
   embed.color: 3447003
   embed.set_thumbnail(url=member.avatar_url)
-  general_channel = member.guild.get_channel(494277342307549186)
-  logs = member.guild.get_channel(494281418894213151)
+  general_channel = bot.get_channel(494277342307549186)
+  logs = bot.get_channel(494281418894213151)
+  general_channel.send(embed=embed)
+  logs.send(embed=embed)
+
+@bot.event
+async def on_member_join(member: discord.Member):
+  if member.guild.id != 494277342307549184:
+  	return False
+
+  embed=discord.Embed(timestamp = datetime.utcnow())
+  embed.add_field(name="Name",value=f"{member} has joined",inline=True)
+  embed.add_field(name="Creation",value=member.created_at,inline=True)
+  embed.color: 3447003
+  embed.set_thumbnail(url=member.avatar_url)
+  general_channel = bot.get_channel(494277342307549186)
+  logs = bot.get_channel(494281418894213151)
   general_channel.send(embed=embed)
   logs.send(embed=embed)
 
@@ -239,11 +254,10 @@ async def on_member_leave(member: discord.Member):
   embed.add_field(name="Joined",value=member.joined_at,inline=True)
   embed.color: 3447003
   embed.set_thumbnail(url=member.avatar_url)
-  general_channel = member.guild.get_channel(494277342307549186)
-  logs = member.guild.get_channel(494281418894213151)
+  general_channel = bot.get_channel(494277342307549186)
+  logs = bot.get_channel(494281418894213151)
   general_channel.send(embed=embed)
   logs.send(embed=embed)
-
 c.execute("CREATE TABLE IF NOT EXISTS bank(User_ID BIGINT NOT NULL, Balance float)")
 conn.commit()
 
