@@ -1,518 +1,729 @@
-
-import discord
-from discord.ext import commands
-
 import asyncio
-from async_timeout import timeout
-from functools import partial
-from youtube_dl import YoutubeDL
+import logging
+import math
+import os
+import re
+import traceback
+import weakref
+from datetime import timedelta
+from typing import Dict
+
+import async_timeout
+import discord
+import libneko
+import youtube_dl
+
+from neko2.shared import commands, traits
+from . import guildsession
+from . import request
 
 
-ytdlopts = {
-    'format': 'bestaudio/best',
-    'outtmpl': 'downloads/%(extractor)s-%(id)s-%(title)s.%(ext)s',
-    'restrictfilenames': True,
-    'noplaylist': False,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'auto',
-    'source_address': '0.0.0.0'  # ipv6 addresses cause issues sometimes
+class NotInVoiceChat(commands.CheckFailure):
+    pass
+
+
+# References:
+#    https://github.com/rg3/youtube-dl#format-selection-examples
+#
+# My own experimentation on the Raspberry Pi 3B:
+#
+# CODEC | =>     | <=     | Notes
+# ======x========x========x=================
+# 3gp   | 150k   | 100k   | Sounds awful
+# aac   | 160k   | 150k   | Pretty decent
+# flv   | 150k   | 109k   | Breaks up a bit
+# m4a   | 150k   | 140k   | Crisp
+# mp3   | 150k   | 150k   | Choppy to start
+# mp4   | 160k   | 2070k  | Choppy as hell
+# ogg   | 140k   | 119k   | Smooooooooooooth  - Seems like the best option.
+# wav   | 150k   | 130k   | Clear
+# webm  | 140k   | 946k   | Clear             - What we generally use
+YT_DL_OPTS = {
+    # "format": "webm[abr>0]/bestaudio/best",
+    "format": "ogg[abr>0]/m4a[abr>0]/webm[abr>0]/bestaudio/best",
+    "ignoreerrors": True,
+    "default_search": "auto",
+    "source_address": "0.0.0.0",
+    "cachedir": False,
+    "quiet": True,
+    "logger": logging.getLogger("YoutubeDL"),
 }
 
-ffmpegopts = {
-    'before_options': '-nostdin',
-    'options': '-vn'
-}
-
-ytdl = YoutubeDL(ytdlopts)
-
-
-class VoiceConnectionError(commands.CommandError):
-    """Custom Exception class for connection errors."""
-
-
-class InvalidVoiceChannel(VoiceConnectionError):
-    """Exception for cases of invalid Voice Channels."""
+# Max clients to run at once. Set to prevent tanking the host if it is slow or
+# low powered (e.g. a Raspberry Pi), or if the net connection is crap. If None,
+# then the restriction is ignored, mostly.
+MAX_CHANNEL_LIMIT = 3
+# Time to wait before leaving an empty VC.
+IDLE_TIME = 5 * 60
+AT_FRONT_TOKEN = " --front "
+PLAYLIST_CHUNK_INCREMENT = (os.cpu_count() - 1) or 1
+MAX_PLAYLIST_SIZE = min(16 * PLAYLIST_CHUNK_INCREMENT, 50)
+TRACK_REGEX = r"^(?:https?://)?((?:www|m)\.)?((?:youtube\.com|youtu\.be))(/(?:[\w\-]+\?v=|embed/|v/)?)([\w\-]+)(\S+)?$"
+MIX_REGEX = r"^(?:https?://)?((?:www|m)\.)?((?:youtube\.com|youtu.be))/(?:\w+\?v=|)([\w\-]+).*[&?]list=([\w\-]+).*$"
 
 
-class YTDLSource(discord.PCMVolumeTransformer):
+def _get_metadata(query):
+    logging.basicConfig(level="INFO")
+    logging.info("_get_metadata(%s)", query)
 
-    def __init__(self, source, *, data, requester):
-        super().__init__(source)
-        self.requester = requester
+    # Reconstruct URL from ID. This prevents urls with other
+    # data in them from causing errors.
+    video_id = re.match(TRACK_REGEX, query)
+    if video_id:
+        video_id = video_id.group(4)
+        query = f"https://youtube.com/watch?v={video_id}"
 
-        self.title = data.get('title')
-        self.web_url = data.get('webpage_url')
+    logging.info(f"Fetching metadata for %s", query)
 
-        # YTDL info dicts (data) have other useful information you might want
-        # https://github.com/rg3/youtube-dl/blob/master/README.md
+    downloader = youtube_dl.YoutubeDL(YT_DL_OPTS)
 
-    def __getitem__(self, item: str):
-        """
-        Allows us to access attributes similar to a dict.
+    print(YT_DL_OPTS, query)
 
-        This is only useful when you are NOT downloading.
-        """
-        return self.__getattribute__(item)
+    info = downloader.extract_info(query, download=False)
+    logging.info(f"Fetched metadata for %s", query)
 
-    @classmethod
-    async def create_source(cls, ctx, search: str, *, loop, download=False):
-        loop = loop or asyncio.get_event_loop()
+    # Search invocations yield a playlist. Get the first video.
+    # Raises type error if no results...
+    if info and info.get("_type") == "playlist":
+        entry = info["entries"][0]
+    else:
+        entry = info
 
-        to_run = partial(ytdl.extract_info, url=search, download=download)
-        data = await loop.run_in_executor(None, to_run)
-
-        if 'entries' in data:
-            # take first item from a playlist
-            data = data['entries'][0]
-
-        if download:
-            source = ytdl.prepare_filename(data)
-        else:
-            return {'webpage_url': data['webpage_url'], 'requester': ctx.author, 'title': data['title']}
-
-        return cls(discord.FFmpegPCMAudio(source), data=data, requester=ctx.author)
-
-    @classmethod
-    async def regather_stream(cls, data, *, loop):
-        """
-        Used for preparing a stream, instead of downloading.
-
-        Since Youtube Streaming links expire.
-        """
-        loop = loop or asyncio.get_event_loop()
-        requester = data['requester']
-
-        to_run = partial(ytdl.extract_info, url=data['webpage_url'], download=False)
-        data = await loop.run_in_executor(None, to_run)
-
-        return cls(discord.FFmpegPCMAudio(data['url']), data=data, requester=requester)
+    if entry:
+        logging.info("Got the 1 expected result just fine.")
+    else:
+        logging.info("Got no results...")
+    return entry
 
 
-class MusicPlayer:
-    """
-    A class which is assigned to each guild using the bot for Music.
+def _get_tracks(url, start, end, verbose=False):
+    logging.basicConfig(level="INFO")
+    logging.info("_get_tracks(%s, %s, %s, %s)", url, start, end, verbose)
 
-    This class implements a queue and loop, which allows for different guilds to listen to different playlists
-    simultaneously.
+    # noinspection PyDictCreation
+    opts = {**YT_DL_OPTS, "playlist_items": ",".join(map(str, range(start, end)))}
+    opts["quiet"] = not verbose
+    downloader = youtube_dl.YoutubeDL(opts)
+    info = downloader.extract_info(url, download=False, ie_key="YoutubePlaylist")
 
-    When the bot disconnects from the Voice it's instance will be destroyed.
-    """
-
-    __slots__ = ('bot', '_guild', '_channel', '_cog', 'queue', 'next', 'current', 'np', 'volume', 'repeat', 'repeating')
-
-    def __init__(self, ctx):
-        self.bot = ctx.bot
-        self._guild = ctx.guild
-        self._channel = ctx.channel
-        self._cog = ctx.cog
-
-        self.queue = asyncio.Queue()
-        self.next = asyncio.Event()
-
-        self.np = None  # Now playing message
-        self.volume = .5
-        self.current = None
-        self.repeat = False
-        self.repeating = None
-
-        ctx.bot.loop.create_task(self.player_loop())
-
-    async def player_loop(self):
-        """Our main player loop."""
-        await self.bot.wait_until_ready()
-
-        while not self.bot.is_closed():
-            self.next.clear()
-
-            try:
-                # Wait for the next song. If we timeout cancel the player and disconnect...
-                async with timeout(300):  # 5 minutes...
-                    if self.repeat and self.current is not None:
-                        source = self.repeating
-                    else:
-                        source = await self.queue.get()
-                        self.repeating = source
-            except asyncio.TimeoutError:
-                return self.destroy(self._guild)
-
-            if not isinstance(source, YTDLSource):
-                # Source was probably a stream (not downloaded)
-                # So we should regather to prevent stream expiration
-                try:
-                    source = await YTDLSource.regather_stream(source, loop=self.bot.loop)
-                except Exception as e:
-                    await self._channel.send(f'There was an error processing your song.\n'
-                                             f'```css\n[{e}]\n```')
-                    continue
-
-            source.volume = self.volume
-            self.current = source
-
-            self._guild.voice_client.play(source, after=lambda _: self.bot.loop.call_soon_threadsafe(self.next.set))
-            embed=discord.Embed(
-                description=f"Now Playing: {source.title}\nRequested By: {source.requester}",
-                color=self.bot.cardinal.randColour()
-            )
-            self.np = await self._channel.send(embed=embed)
-            await self.next.wait()
-
-            # Make sure the FFmpeg process is cleaned up.
-            source.cleanup()
-
-            try:
-                # We are no longer playing this song...
-                await self.np.delete()
-            except discord.HTTPException:
-                pass
-
-    def destroy(self, guild):
-        """Disconnect and cleanup the player."""
-        return self.bot.loop.create_task(self._cog.cleanup(guild))
+    logging.info(f'Got {len(info["entries"])} results.')
+    return info["entries"]
 
 
-class music:
-    """Music related commands."""
+# noinspection PyMethodMayBeStatic,PyBroadException
+class MusicCog(traits.CogTraits):
+    __NO_HOTSWAP__ = True
 
-    __slots__ = ('bot', 'cas', 'players')
-
-    def __init__(self, bot):
-        self.bot = bot
-        self.cas = bot.cardinal
-        self.players = {}
-
-    async def cleanup(self, guild):
-        try:
-            await guild.voice_client.disconnect()
-        except AttributeError:
-            pass
-
-        try:
-            del self.players[guild.id]
-        except KeyError:
-            pass
+    def __init__(self):
+        # Makes my life easier.
+        self.logger.setLevel("DEBUG")
+        logging.getLogger("YoutubeDL").setLevel("INFO")
+        self.sessions: Dict[discord.Guild, guildsession.Session] = {}
 
     async def __local_check(self, ctx):
-        """A local check which applies to all commands in this cog."""
-        if not ctx.guild:
-            raise commands.NoPrivateMessage
-        return True
-
-    async def __error(self, ctx, error):
-        """A local error handler for all errors arising from commands in this cog."""
-        if isinstance(error, commands.NoPrivateMessage):
-            try:
-                return await ctx.send(embed=discord.Embed(description='This command can not be used in Private Messages.', color=self.bot.cardinal.randColour()))
-            except discord.HTTPException:
-                pass
-        elif isinstance(error, InvalidVoiceChannel):
-            await ctx.send('Error connecting to Voice Channel. '
-                           'Please make sure you are in a valid channel or provide me with one')
-
-    def get_player(self, ctx):
-        """Retrieve the guild player, or generate one."""
-        try:
-            player = self.players[ctx.guild.id]
-        except KeyError:
-            player = MusicPlayer(ctx)
-            self.players[ctx.guild.id] = player
-
-        return player
-
-    @commands.command(brief="Summons the player.")
-    async def summon(self, ctx):
-        """Connects to the users voice channel!"""
-        try:
-            channel = ctx.author.voice.channel
-        except AttributeError:
-            raise InvalidVoiceChannel('You are not currently in a voice channel!')
-
-        vc = ctx.voice_client
-
-        if vc:
-            if vc.channel.id == channel.id:
-                return
-            try:
-                await vc.move_to(channel)
-            except asyncio.TimeoutError:
-                raise VoiceConnectionError(f'Moving to channel: <{channel}> timed out.')
+        """Only work in guilds."""
+        if self.sessions.get(ctx.guild) is None:
+            return True
+        elif ctx.author.id == ctx.bot.owner_id:
+            return True
+        elif ctx.author.voice is None:
+            raise NotInVoiceChat("Please enter my voice chat channel first.")
+        elif ctx.author.voice.channel == self.sessions.get(ctx.guild).voice_channel:
+            return True
         else:
+            return False
+
+    def __unload(self):
+        for session in self.sessions.copy().values():
+            asyncio.ensure_future(session.disconnect())
+            asyncio.ensure_future(
+                session.response_channel.send(
+                    "The bot is restarting, so I will disconnect now. Sorry!"
+                )
+            )
+
+    def try_delete(self, ctx):
+        async def deleter():
+            await asyncio.sleep(10)
+            await commands.try_delete(ctx)
+
+        ctx.bot.loop.create_task(deleter())
+
+    async def on_voice_state_update(self, _, before, after):
+        """
+        Checks if the VC we are in has become empty. When it has, we leave.
+        """
+        # If the member just left a voice channel, check if we were also in it.
+        # If we were, and the channel is now empty, we should leave it too.
+
+        if after.channel is None and before.channel is not None:
+            c = before.channel
+
             try:
-                await channel.connect()
-            except asyncio.TimeoutError:
-                raise VoiceConnectionError(f'Connecting to channel: <{channel}> timed out.')
+                session = self.sessions[c.guild]
 
-        await ctx.send(embed=discord.Embed(description=f'Connected to: {channel}', color=self.bot.cardinal.randColour()), delete_after=20)
+                if session.voice_channel == c:
+                    if len(session.voice_channel.members) <= 1:
+                        await asyncio.sleep(IDLE_TIME)
 
-    @commands.command(brief="Plays/Queues a new song!")
-    async def play(self, ctx, *, search: str):
-        """
-        Starts the player if it isn't running! If music is already playing,
-        it will add new songs to the queue!
-
-        Usage: (pre)play [search term or youtube url]
-        """
-        if len(ctx.message.embeds) > 0:
-            return
-
-        async with ctx.typing():
-            def vc(ctx):
-                return ctx.voice_client
-
-            if not vc(ctx):
-                await ctx.invoke(self.summon)
-                await asyncio.sleep(5)
-
-            if ctx.author in vc(ctx).channel.members:
-                try:
-                    player = self.get_player(ctx)
-
-                    # If download is False, source will be a dict which will be used later to regather the stream.
-                    # If download is True, source will be a discord.FFmpegPCMAudio with a VolumeTransformer.
-                    source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop, download=False)
-
-                    if "ear" and "rape" not in source["title"].lower():
-                        embed = discord.Embed(
-                            description=f"Added {source['title']} to the Queue!",
-                            color=self.bot.cardinal.randColour()
-                        )
-                        await ctx.send(embed=embed, delete_after=15)
-                        return await player.queue.put(source)
-                    embed=discord.Embed(
-                        description=f"""The song {source['title']} was filtered out as potential ear rape!""",
-                        color=self.bot.cardinal.randColour()
-                    )
-                    await ctx.send(embed=embed, delete_after=15)
-                except Exception as e:
-                    embed=discord.Embed(
-                        description="I was not able to find that video!",
-                        color=self.bot.cardinal.randColour()
-                    )
-                    await ctx.send(embed=embed)
-
-    @commands.command(brief="Pauses the current song.")
-    async def pause(self, ctx):
-        """Pause the currently playing song."""
-        vc = ctx.voice_client
-
-        if vc is not None and ctx.author in vc.channel.members:
-            if not vc or not vc.is_playing():
-                return await ctx.send(embed=discord.Embed(description='I am not currently playing anything!', color=self.bot.cardinal.randColour()), delete_after=20)
-            elif vc.is_paused():
-                return
-
-            vc.pause()
-            await ctx.send(embed=discord.Embed(description=f'{ctx.author}: Paused the song!', color=self.bot.cardinal.randColour()))
-
-    @commands.command(brief="Resumes the current song.")
-    async def resume(self, ctx):
-        """Resume the currently paused song."""
-        vc = ctx.voice_client
-
-        if vc is not None and ctx.author in vc.channel.members:
-            if not vc or not vc.is_connected():
-                return await ctx.send(embed=discord.Embed(description='I am not currently playing anything!', color=self.bot.cardinal.randColour()), delete_after=20)
-            elif not vc.is_paused():
-                return
-
-        vc.resume()
-        await ctx.send(embed=discord.Embed(description=f'{ctx.author}: Resumed the song!', color=self.bot.cardinal.randColour()))
-
-    @commands.command(aliases=["fs"], brief="Forceskips the song!")
-    @commands.has_permissions(manage_guild=True)
-    async def forceskip(self, ctx):
-        """
-        Force skips the song!
-
-        Requires "manage_guild" perms!
-        """
-        vc = ctx.voice_client
-        if vc is not None and ctx.author in vc.channel.members:
-            if not vc or not vc.is_connected():
-                embed = discord.Embed(
-                    title="Music Player",
-                    description="I am not currently playing anything!",
-                    color=self.bot.cardinal.randColour()
-                )
-                return await ctx.send(embed=embed, delete_after=20)
-            if vc.is_paused():
+                        if len(session.voice_channel.members) <= 1:
+                            await session.disconnect()
+                        del session
+            except KeyError:
+                # We can just ignore.
                 pass
-            elif not vc.is_playing():
-                return
 
-        vc.stop()
-
-    @commands.command(brief="Skips the song.")
-    async def skip(self, ctx):
-        """Skip the currently playing song."""
-        vc = ctx.voice_client
-        if vc is not None and ctx.author in vc.channel.members:
-            if not vc or not vc.is_connected():
-                embed = discord.Embed(
-                    title="Music Player",
-                    description="I am not currently playing anything!",
-                    color=self.bot.cardinal.randColour()
+    @commands.command(brief="Join the voice channel you are in.")
+    async def join(self, ctx):
+        try:
+            if ctx.guild in self.sessions:
+                raise guildsession.MusicSessionError(
+                    None, "A session already exists in this server!"
                 )
-                return await ctx.send(embed=embed, delete_after=20)
-            if vc.is_paused():
-                pass
-            elif not vc.is_playing():
-                return
 
-            def stop():
-                vc.stop()
-
-            if len(vc.channel.members) > 2:
-                embed = discord.Embed(
-                    title="Music Player",
-                    description=f"""
-{ctx.author.mention} has requested the current song be skipped!
-If a majority vote is reached, I will skip this track!""",
-                    color=self.bot.cardinal.randColour()
+            if MAX_CHANNEL_LIMIT is not None and len(self.sessions) > MAX_CHANNEL_LIMIT:
+                raise guildsession.MusicSessionError(
+                    None, "My system is currently overloaded. Sorry :("
                 )
-                msg = await ctx.send(embed=embed)
-                await msg.add_reaction("✅")
-                await asyncio.sleep(1)
-                await msg.add_reaction("❎")
-                await asyncio.sleep(1)
-                pro = 0
-                against = 0
-                total = len(vc.channel.members) - 1
 
-                def check(r, u):
-                    return u in vc.channel.members
-
-                try:
-                    for i in range(120):
-                        reaction, user = await self.bot.wait_for("reaction_add", check=check)
-                        if pro >= total * .75:
-                            stop()
-                            break
-                        elif against >= total * .75:
-                            raise Exception
-                        elif str(reaction.emoji) == "✅":
-                            pro = pro + 1
-                        elif str(reaction.emoji) == "❎":
-                            against = against + 1
-                        await asyncio.sleep(1)
-                    emebd = discord.Embed(
-                        title="Music Player",
-                        description="A majority was reached! Skipping...",
-                        color=self.bot.cardinal.randColour()
-                    )
-                except Exception as e:
-                    embed = discord.Embed(
-                        description="A majority vote was not reached!",
-                        color=self.bot.cardinal.randColour()
-                    )
-                await msg.edit(embed=embed, delete_after=20)
-            else:
-                embed = discord.Embed(
-                    description="The song has been skipped!",
-                    color=self.bot.cardinal.randColour()
+            if not ctx.author.voice:
+                raise guildsession.MusicSessionError(
+                    None, "Join a voice channel first."
                 )
-                await ctx.send(embed=embed, delete_after=20)
-                stop()
 
-    @commands.command(aliases=['q'], brief="Provides queued songs")
-    async def queue(self, ctx):
-        """Provides a list of upcoming songs!"""
-        vc = ctx.voice_client
+            # Proxy to ourselves. Stops circular references.
+            my_weak_proxy = weakref.proxy(self)
 
-        if not vc or not vc.is_connected():
-            return await ctx.send(embed=discord.Embed(description='I am not currently connected to voice!', color=self.bot.cardinal.randColour()), delete_after=20)
+            session = await guildsession.Session.new(
+                ctx.bot.loop,
+                ctx.channel,
+                ctx.author.voice.channel,
+                lambda *_: my_weak_proxy.sessions.pop(ctx.guild),
+            )
 
-        player = self.get_player(ctx)
-        if player.queue.empty():
-            return await ctx.send(embed=discord.Embed(description='There are currently no more queued songs.', color=self.bot.cardinal.randColour()))
+            self.sessions[ctx.guild] = session
 
-        text = "\n\n".join(i["title"] for i in player.queue._queue)
+            encoder = session.voice_client.encoder
+            await session.response_channel.send(
+                f"Connected to {session.voice_client.endpoint} at "
+                f"{session.voice_client.endpoint_ip} "
+                f"using {encoder.CHANNELS:,} audio channels at "
+                f"{encoder.SAMPLING_RATE/1000:,.2f}kHz. "
+                f"Target bitrate is {session.voice_channel.bitrate/1000:,.2f}kHz."
+            )
 
-        await self.cas.Pager().embed_generator_send(self.bot, ctx, text,  lines=20, title=f'In Queue - {len(player.queue._queue)}')
+            commands.acknowledge(ctx, timeout=5)
+            return True
+        except guildsession.MusicSessionError as ex:
+            traceback.print_exc()
+            await ctx.send(str(ex))
+        return False
 
-    @commands.command(aliases=['np'], brief="Displays the current song")
-    async def playing(self, ctx):
-        """Display information about the currently playing song."""
-        vc = ctx.voice_client
+    def _make_request(self, title, source, info, author):
+        self.logger.debug(
+            "_make_request (%s, %s, %s, %s)", title, source, str(info)[:15], author
+        )
+        return request.Request(
+            title=title,
+            referral=source,
+            id=info["id"],
+            user=author,
+            url=info["url"],
+            thumbnail=info["thumbnail"],
+            author=info["uploader"],
+            author_url=info["uploader_url"],
+            length=timedelta(seconds=math.ceil(float(info["duration"]))),
+        )
 
-        if not vc or not vc.is_connected():
-            return await ctx.send(embed=discord.Embed(description='I am not currently connected to voice!', color=self.bot.cardinal.randColour()), delete_after=20)
+    @classmethod
+    async def _get_playlist(cls, url):
+        cls.logger.debug("_get_playlist(%s)", url)
 
-        player = self.get_player(ctx)
-        if not player.current:
-            return await ctx.send(embed=discord.Embed(description='I am not currently playing anything!', color=self.bot.cardinal.randColour()))
+        # Problem with youtube_dl and playlists is that it is rather...slow. The user will probably
+        # get bored of waiting two minutes for the data to be collected, you know?
+
+        # Quick and simple way around this is to essentially play the first video, and
+        # simultaneously download the rest. Kind of a crap way to do this, but eh.
+
+        first = await cls.run_in_pp_executor(_get_metadata, [url])
+        yield first
+
+        start = 1
+
+        futures = []
+
+        while start <= MAX_PLAYLIST_SIZE:
+            end = start + PLAYLIST_CHUNK_INCREMENT
+            futures.append(cls.run_in_pp_executor(_get_tracks, [url, start, end]))
+            start = end + 1
+
+        track_list_tuple = await asyncio.gather(*futures)
+
+        for track_list in track_list_tuple:
+            for track in track_list:
+                yield track
+
+    @commands.group(
+        brief="Play the given URL, or search for the query on Youtube.",
+        invoke_without_command=True,
+        aliases=["p"],
+    )
+    async def play(self, ctx, *, source):
+        """
+        If a URL to a video is provided, play that video's audio, otherwise,
+        search YouTube for the first match for the input and play that.
+
+        Pass the --front flag to push to the front of the queue rather than the
+        rear.
+        """
+        at_front = False
+        # Hacks to make string matching easier.
+        if AT_FRONT_TOKEN in f" {source} ":
+            at_front = True
+            source = source.replace(AT_FRONT_TOKEN.strip(), "")
 
         try:
-            # Remove our previous now_playing message.
-            await player.np.delete()
-        except discord.HTTPException:
+            self.logger.debug("IN PLAY")
+
+            if ctx.guild not in self.sessions:
+                r = await self.join.callback(self, ctx)
+
+                # Returns false on error.
+                if not r:
+                    return
+
+            with ctx.typing():
+                try:
+                    with async_timeout.timeout(15):
+                        i = await self.run_in_pp_executor(_get_metadata, [source])
+                except asyncio.TimeoutError:
+                    traceback.print_exc()
+                    i = None
+
+                if not i:
+                    raise TypeError
+
+                title = i.get("title", source)
+                session = self.sessions[ctx.guild]
+
+            req = self._make_request(title, source, i, ctx.author)
+
+            if at_front:
+                await session.queue.unshift(req)
+            else:
+                await session.queue.put(req)
+
+            nb = " "
+            # Prevent @everyone exploits.
+            await ctx.send(f"**@{ctx.author}:** Added {title.replace('@', '@' + nb)}.")
+        except (TypeError, ValueError, AttributeError):
+            traceback.print_exc()
+            return await ctx.send("No results, or video is not available....")
+        except guildsession.MusicSessionError as ex:
+            traceback.print_exc()
+            await ctx.send(f"Couldn't add the track because {ex}")
+        except Exception as ex:
+            traceback.print_exc()
+            return await ctx.send(f"Couldn't add that because {str(ex) or repr(ex)}")
+
+    @play.command(name="mix", brief="Adds a mix to the current queue.")
+    async def play_mix(self, ctx, *, url):
+        """
+        Attempts to get a playlist. This will decay into a bunch of tracks as they are
+        iterated across.
+
+        Note that excessively long playlists will be truncated down to around 300 tracks.
+        """
+        return await self._mix(ctx, source=url)
+
+    @commands.command(name="mix", brief="Adds a mix to the current queue.")
+    async def mix(self, ctx, *, source):
+        """
+        Attempts to get a playlist. This will decay into a bunch of tracks as they are
+        iterated across.
+
+        Note that excessively long playlists will be truncated down to around 300 tracks.
+
+        You can use the --front flag like with the `play` command, but it will only
+        put the first track to the front. This is done to prevent obnoxious people pushing
+        50-track mixes to the front of the queue.
+        """
+        return await self._mix(ctx, source=source)
+
+    async def _mix(self, ctx, *, source):
+        at_front = False
+        # Hacks to make string matching easier.
+        if AT_FRONT_TOKEN in f" {source} ":
+            at_front = True
+            source = source.replace(AT_FRONT_TOKEN.strip(), "")
+
+        try:
+            self.logger.debug("IN MIX")
+
+            if ctx.guild not in self.sessions:
+                r = await self.join.callback(self, ctx)
+
+                # Returns false on error.
+                if not r:
+                    return
+
+            session = self.sessions[ctx.guild]
+
+            match = re.match(MIX_REGEX, source)
+            if match:
+                source = f"https://youtube.com/watch?v={match.group(3)}&list={match.group(4)}"
+            else:
+                raise guildsession.MusicSessionError(
+                    session, "could not resolve this link"
+                )
+
+            with ctx.typing():
+                total_tracks = 0
+
+                genexp = self._get_playlist(source)
+
+                try:
+                    first = await genexp.asend(None)
+                except StopAsyncIteration:
+                    raise guildsession.MusicSessionError(
+                        session, "could not resolve this link"
+                    )
+
+                title = first.get("title", source)
+                first_request = self._make_request(
+                    title, first["url"], first, ctx.author
+                )
+
+                total_tracks += 1
+
+                # Resolve into a Mix
+                mix = request.Mix(
+                    source,
+                    ctx.author,
+                    libneko.aggregates.MutableOrderedSet[request.Request](),
+                )
+
+                has_added = False
+
+                async def put():
+                    nonlocal has_added
+                    if not has_added:
+                        await session.queue.put(mix)
+                        has_added = True
+
+                if not session.now_playing:
+                    m = await ctx.send(
+                        "I am going to play the first track while I download the rest..."
+                        " Please be patient!"
+                    )
+
+                    if at_front:
+                        await session.queue.unshift(first_request)
+                    else:
+                        await session.queue.put(first_request)
+
+                    await put()
+
+                else:
+                    m = await ctx.send("Downloading your mix's metadata. Be patient...")
+                    mix.tracks.add(first_request)
+
+                async for item in genexp:
+                    is_first = item["id"] == first_request.id
+                    is_dupe = item["id"] in map(lambda t: t.id, mix.tracks)
+
+                    if is_first or is_dupe:
+                        self.logger.info(
+                            f'Skipping duplicate track {item["title"]} -- {item["url"]}'
+                        )
+                        continue
+
+                    await put()
+
+                    mix.tracks.add(
+                        self._make_request(
+                            item["title"], item.get("alt_title"), item, ctx.author
+                        )
+                    )
+
+                    self.logger.info(
+                        f'Emplacing track {item["title"]} -- {item["url"]}'
+                    )
+
+                    total_tracks += 1
+
+                await put()
+
+            try:
+                await ctx.send(
+                    content=f'Added a total of {len(mix)} track{"s" if len(mix) - 1 else ""} to '
+                    "the queue."
+                )
+                await m.delete()
+            except:
+                traceback.print_exc()
+                pass
+
+        except (TypeError, ValueError, AttributeError):
+            traceback.print_exc()
+            return await ctx.send("No results, or video is not available....")
+
+        except guildsession.MusicSessionError as ex:
+            traceback.print_exc()
+            await ctx.send(f"Couldn't add the track because {ex}")
+
+        except Exception as ex:
+            traceback.print_exc()
+            return await ctx.send(f"Couldn't add that because {str(ex) or repr(ex)}")
+
+    @commands.command(brief="Request the next track be played.", aliases=["next", "s"])
+    async def skip(self, ctx, *args):
+        """
+        If no tracks are in the queue, I will wait for about ten minutes
+        and then disconnect.
+        
+        If you requested the track, you can force the track to skip with
+        `--force` on the end of the command.
+
+        You can skip the current playlist if there is one with `--playlist`
+        """
+        try:
+            session = self.sessions[ctx.guild]
+            if "--force" in args:
+                c1 = ctx.author.id == ctx.bot.owner_id
+                c2 = ctx.author == session.now_playing.user
+
+                if c1 or c2:
+                    if session.voice_client and session.voice_client.is_playing():
+                        await ctx.send("Okay, master.", delete_after=15)
+                        session.voice_client.stop()
+                    else:
+                        await ctx.send("Nothing was playing...")
+                else:
+                    await ctx.send("You didn't request this track!")
+            else:
+                session.skip(ctx.author)
+                if "--playlist" in args:
+                    if isinstance(session.queue[0], request.Mix):
+                        await session.queue.get()
+        except KeyError:
+            return await ctx.send(
+                "Join a voice channel first and run the `join` command. "
+                "Then add some tracks with `play`"
+            )
+        except guildsession.MusicSessionError as ex:
+            traceback.print_exc()
+            await ctx.send(ex)
+            return self.try_delete(ctx)
+        else:
+            commands.acknowledge(ctx, timeout=None)
+
+    @commands.command(brief="Pops the last track from the queue.", aliases=["d"])
+    async def pop(self, ctx):
+        """This only works if you requested that track."""
+        try:
+            session = self.sessions[ctx.guild]
+
+            c1 = ctx.author.id == ctx.bot.owner_id
+            c2 = session.queue[-1].user == ctx.author
+
+            if c1 or c2:
+                item = await session.queue.pop()
+                nb = " "
+                # Prevent @everyone exploits.
+                await ctx.send(
+                    f"Successfully removed {str(item).replace('@', '@' + nb)} from the back of "
+                    f"the queue.",
+                    delete_after=10,
+                )
+            else:
+                await ctx.send(
+                    "You don't have permission to do this. Only the requester can pop.",
+                    delete_after=10,
+                )
+                return self.try_delete(ctx)
+        except KeyError:
+            traceback.print_exc()
+            await ctx.send("I am not playing in this server.", delete_after=10)
+            return self.try_delete(ctx)
+        except IndexError:
+            traceback.print_exc()
+            await ctx.send("The queue is empty.", delete_after=10)
+            return self.try_delete(ctx)
+        else:
+            commands.acknowledge(ctx)
+
+    @commands.command(brief="Move me to a different voice channel.", aliases=["move"])
+    async def movevoice(self, ctx, destination: discord.VoiceChannel):
+        try:
+            await self.sessions[ctx.guild].move_to(destination)
+        except KeyError:
+            await ctx.send("I am not playing in this server.", delete_after=10)
+            return self.try_delete(ctx)
+        else:
+            commands.acknowledge(ctx)
+
+    @commands.command(brief="Change the channel I send VC-related messages to.")
+    async def movetext(self, ctx, destination: discord.TextChannel):
+        try:
+            await self.sessions[ctx.guild].move_to(destination)
+        except KeyError:
+            await ctx.send("I am not playing in this server.", delete_after=10)
+            return self.try_delete(ctx)
+        else:
+            commands.acknowledge(ctx)
+
+    @commands.command(
+        brief="Leave the audio channel in this server.", aliases=["bye", "stop"]
+    )
+    async def leave(self, ctx):
+        try:
+            await self.sessions[ctx.guild].disconnect()
+            commands.acknowledge(ctx, timeout=5)
+        except KeyError:
+            await ctx.send("I am not playing in this server.", delete_after=10)
+            return self.try_delete(ctx)
+        except guildsession.MusicSessionError as ex:
+            await ctx.send(ex, delete_after=10)
+        except Exception:
             pass
 
-        embed=discord.Embed(description=f"Now Playing: {vc.source.title}\nRequested By: {vc.source.requester}", color=self.bot.cardinal.randColour())
-        player.np = await ctx.send(embed=embed)
+        commands.acknowledge(ctx, timeout=None)
 
-    @commands.command(aliases=['vol'], brief="Changes the player volume!")
-    async def volume(self, ctx, *, vol: float):
-        """Change the player volume. Please specify a value between 1 and 100!"""
-        vc = ctx.voice_client
-        if vc is not None and ctx.author in vc.channel.members:
-            if not vc or not vc.is_connected():
-                return await ctx.send(embed=discord.Embed(description='I am not currently connected to voice!', color=self.bot.cardinal.randColour()), delete_after=20)
+    @commands.command(brief="Display the music queue.", aliases=["q"])
+    async def queue(self, ctx):
+        try:
+            session = self.sessions[ctx.guild]
 
-            if not 0 < vol < 101:
-                return await ctx.send(embed=discord.Embed(description='Please enter a value between 1 and 100.', color=self.bot.cardinal.randColour()), delete_after=20)
-
-            player = self.get_player(ctx)
-
-            if vc.source:
-                vc.source.volume = vol / 100
-
-            player.volume = vol / 100
-            await ctx.send(embed=discord.Embed(description=f'{ctx.author}: Set the volume to {vol}%', color=self.bot.cardinal.randColour()))
-
-    @commands.command(brief="Changes the player volume!")
-    async def repeat(self, ctx):
-        """Repeats the currently playing song"""
-        vc = ctx.voice_client
-        if vc is not None and ctx.author in vc.channel.members:
-            if not vc or not vc.is_connected():
-                return await ctx.send(embed=discord.Embed(description='I am not currently connected to voice!', color=self.bot.cardinal.randColour()), delete_after=20)
-            try:
-                player = self.get_player(ctx)
-
-                if player.repeat:
-                    player.repeat = False
-                    out = f"The song {vc.source.title} is no longer on repeat!"
-                else:
-                    player.repeat = True
-                    out = f"The song {vc.source.title} is now on repeat!"
-
-            except AttributeError:
-                out = "There is not currently a song playing!"
-            embed = discord.Embed(description=out, color=self.bot.cardinal.randColour())
-            await ctx.send(embed=embed)
-
-    @commands.command(aliases=["destroy"], brief="Stops and kills the player!")
-    async def stop(self, ctx):
-        """Stop the currently playing song and destroy the player."""
-        vc = ctx.voice_client
-        if vc is not None and ctx.author in vc.channel.members:
-            if not vc or not vc.is_connected():
-                embed = discord.Embed(
-                    description='I am not currently playing anything!',
-                    color=self.bot.cardinal.randColour()
-                )
-                return await ctx.send(embed=embed)
-            await self.cleanup(ctx.guild)
-            embed=discord.Embed(
-                description="The player has been stopped!",
-                color=self.bot.cardinal.randColour()
+            track_embeds = (
+                [session.now_playing.make_embeds()[0]] if session.now_playing else []
             )
-            await ctx.send(embed=embed)
+            for track in session.queue:
+                track_embeds.extend(track.make_embeds())
 
+            if not track_embeds:
+                return await ctx.send(
+                    "The queue is empty. If you have added tracks that have "
+                    "yet to be played, then they may still be loading."
+                )
 
-def setup(bot):
-    bot.add_cog(music(bot))
+            nav = libneko.EmbedNavigator(ctx, track_embeds)
+            nav.start()
+
+        except KeyError:
+            traceback.print_exc()
+            await ctx.send("I am not playing in this server.", delete_after=10)
+            return self.try_delete(ctx)
+        except guildsession.MusicSessionError as ex:
+            traceback.print_exc()
+            await ctx.send(ex)
+
+    @commands.command(brief="Pauses the player")
+    async def pause(self, ctx):
+        try:
+            session = self.sessions[ctx.guild]
+
+            if not session.voice_client.is_paused():
+                session.voice_client.pause()
+                commands.acknowledge(ctx, emoji="\N{DOUBLE VERTICAL BAR}", timeout=None)
+            else:
+                commands.acknowledge(ctx, timeout=5)
+        except KeyError:
+            await ctx.send("I am not playing in this server.", delete_after=10)
+            return self.try_delete(ctx)
+
+    @commands.command(brief="Resumes the player.")
+    async def resume(self, ctx):
+        try:
+            session = self.sessions[ctx.guild]
+
+            if session.voice_client.is_paused():
+                session.voice_client.resume()
+                commands.acknowledge(
+                    ctx, emoji="\N{BLACK RIGHT-POINTING TRIANGLE}", timeout=None
+                )
+            else:
+                commands.acknowledge(ctx, timeout=5)
+        except KeyError:
+            await ctx.send("I am not playing in this server.", delete_after=10)
+            return self.try_delete(ctx)
+
+    @commands.command(brief="Replays the track next.")
+    async def replay(self, ctx):
+        try:
+            session = self.sessions[ctx.guild]
+            if not session.now_playing:
+                await ctx.send("Nothing has played yet.")
+            else:
+                await session.queue.unshift(session.now_playing)
+                commands.acknowledge(ctx, timeout=5)
+
+        except KeyError:
+            await ctx.send("I am not playing in this server.", delete_after=10)
+            return self.try_delete(ctx)
+        except guildsession.MusicSessionError as ex:
+            await ctx.send(ex)
+
+    async def _volume(self, ctx, value: float):
+        try:
+            session = self.sessions[ctx.guild]
+
+            if not session.now_playing:
+                return await ctx.send("Nothing has played yet.")
+
+            await session.set_volume(value)
+            commands.acknowledge(ctx)
+        except KeyError:
+            await ctx.send("I am not playing in this server.", delete_after=10)
+            return self.try_delete(ctx)
+        except ValueError:
+            await ctx.send("Please give a number!", delete_after=10)
+            return self.try_delete(ctx)
+
+    @commands.command(brief="Changes the volume. Defaults to 100%.", aliases=["vol"])
+    async def volume(self, ctx, value: str = "100%"):
+        try:
+            self.try_delete(ctx)
+
+            if value.endswith("%"):
+                value = value[:-1]
+
+            value = float(value)
+
+            await self._volume(ctx, value)
+        except guildsession.MusicSessionError as ex:
+            await ctx.send(ex)
+            return self.try_delete(ctx)
+
+    @commands.command(brief="Mutes the bot, but keeps playing.")
+    async def mute(self, ctx):
+        try:
+            self.try_delete(ctx)
+            await self._volume(ctx, 0)
+        except guildsession.MusicSessionError as ex:
+            await ctx.send(ex)
+            return self.try_delete(ctx)
+
+    @commands.command(brief="Unmutes the bot... or resets the volume to max.")
+    async def unmute(self, ctx):
+        try:
+            self.try_delete(ctx)
+            await self._volume(ctx, 100)
+        except guildsession.MusicSessionError as ex:
+            await ctx.send(ex)
+            return self.try_delete(ctx)
+
+    @commands.command(brief="Shows info about the current track.")
+    async def this(self, ctx):
+        try:
+            session = self.sessions[ctx.guild]
+            np = session.now_playing
+
+            nav = libneko.EmbedNavigator(ctx, np.make_embeds())
+            nav.start()
+
+        except KeyError:
+            await ctx.send("I am not playing in this server.", delete_after=10)
+            return self.try_delete(ctx)
+        except guildsession.MusicSessionError as ex:
+            await ctx.send(ex)
