@@ -2,25 +2,12 @@ import discord
 import datetime
 from discord.ext import commands
 
-def owner(ctx):
-  if ctx.author.id == 462351034384252938:
-    return True
-  else:
-    return False
+
 
 class User:
 
   def __init__(self,bot):
     self.bot = bot
-
-  @commands.command()
-  async def invite(self,ctx):
-    await ctx.send("https://discordapp.com/api/oauth2/authorize?client_id=484204301862830090&permissions=-1&scope=bot")
-
-  @commands.check(owner)
-  @commands.command()
-  async def position(self,ctx,xrole: discord.Role):
-    await ctx.author.send(xrole.position)
 
   @commands.command(pass_context=True)
   async def serverinfo(self,ctx):
@@ -57,9 +44,63 @@ class User:
       await ctx.send(embed=embed)
 
   @commands.command()
-  async def roles(self,ctx):
-    await ctx.send(guild.roles)
+  async def server(ctx):
+    embed = discord.Embed(title="Server Invite",description="***The Alchemist Workshop***\nThe Alchemist Workshop is a server that helps people learn about bots. We are starting up right now but we will build ourselves up! We are encourage helpfulness as well as becoming an ally with other people in the community.\n\n***We Offer***:\n- Helping make discord bots\n- Language tutorials\n- Custom economy system\n- Server is made how the users want it to be made\n- Self promotion\n\n***Invite Link***:\n\nhttps://discord.gg/57cTcAA\n\n***Bot Invite***\n\nhttps://discordapp.com/api/oauth2/authorize?client_id=484204301862830090&permissions=-1&scope=bot\n")
+    await ctx.send(embed=embed)
 
+  @commands.command()
+  async def dance(ctx):
+    embed=discord.Embed()
+    embed.set_image(url="https://media.discordapp.net/attachments/462497054430593035/493287977552969735/Konosuba_dbab24_6194110.gif")
+    await ctx.send(embed=embed)
+
+  @commands.command()
+  async def ping(ctx):
+    # Time the time required to send a message first.
+    # This is the time taken for the message to be sent, awaited, and then 
+    # for discord to send an ACK TCP header back to you to say it has been
+    # received; this is dependant on your bot's load (the event loop latency)
+    # and generally how shit your computer is, as well as how badly discord
+    # is behaving.
+    start = time.monotonic()
+    msg = await ctx.send('Pinging...')
+    millis = (time.monotonic() - start) * 1000
+
+    # Since sharded bots will have more than one latency, this will average them if needed.
+    heartbeat = ctx.bot.latency * 1000
+
+    await msg.edit(content=f'Heartbeat: {heartbeat:,.2f}ms\tACK: {millis:,.2f}ms.')
+
+
+  @commands.command()
+  async def suggest(ctx, *, msg):
+    x = ctx.bot.get_channel(493477736069726209)
+    embed = discord.Embed(title="Suggestion",description=f"{ctx.author.name} | ID : {ctx.author.id} | has sent suggestion | {msg}")
+    await x.send(embed=embed)
+    em = discord.Embed(title="Suggestion sent",description=f"Message was sent")
+    await ctx.send(embed=em)
+
+  @commands.command()
+  async def invite(self,ctx,botid,prefix):
+    if ctx.guild.id == 
+    embed = discord.Embed(title="Bot Invite")
+    c.execute("CREATE TABLE IF NOT EXISTS bots(Bot_ID BIGINT, Prefix VARCHAR,Author_ID BIGINT)")
+    conn.commit()
+    #Author
+    embed.add_field(name=f"Author",value=f"{ctx.author.id} | {ctx.author}")
+    embed.add_field(name=f"Invite",value=f"https://discordapp.com/api/oauth2/authorize?client_id={botid}&permissions=-1&scope=bot")
+    embed.add_field(name=f"Prefix",value=f"{prefix}")
+    y = c.execute("SELECT * FROM bots WHERE Bot_ID=?",(botid))
+    if y != [] or None:
+      pass
+    else:
+      c.execute("INSERT INTO bots VALUES(?,?,?)",(botid,prefix,ctx.author.id))
+      conn.commit()
+    em = discord.Embed(description="Thank you for submitting your bot! You should get a dm within the next 24 hours if your bot has been accepted! Have a good day!")
+    await ctx.send(em)
+    x = ctx.bot.get_channel(494282311400030209)
+    await x.send(embed=embed)
+    
 class Moderator:
 
   def __init__(self,bot):
@@ -103,6 +144,18 @@ class Moderator:
           )
         ), delete_after=15
       )
+
+  @commands.command()
+  async def setprefix(self,ctx,theprefix):
+    x = c.execute("SELECT prefix FROM my_prefix WHERE guild_id=?",(ctx.guild.id,)).fetchall()
+    if x != [] or None:
+      c.execute("UPDATE my_prefix SET prefix = ? WHERE guild_id = ?",(theprefix,ctx.guild.id))
+      conn.commit()
+    else:
+      c.execute("INSERT INTO my_prefix VALUES(?,?)",(theprefix,ctx.guild.id))
+      conn.commit()
+
+    await ctx.send(f"Your prefix is now {theprefix}")
 
 def setup(bot):
     bot.add_cog(User(bot))
