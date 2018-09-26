@@ -165,7 +165,7 @@ async def setprefix(ctx,theprefix):
 
 @bot.command()
 async def invite(ctx,botid,prefix):
-	x = ctx.bot.get_channel(494282311400030209)
+	x = discord.utils.get(ctx.guild.channels,id=494282311400030209)
 	embed = discord.Embed(title="Bot Invite")
 	c.execute("CREATE TABLE IF NOT EXISTS bots(Bot_ID BIGINT, Prefix VARCHAR,Author_ID BIGINT)")
 	conn.commit()
