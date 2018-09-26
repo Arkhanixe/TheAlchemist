@@ -237,8 +237,8 @@ async def on_member_join(member: discord.Member):
   embed.add_field(name="Guild",value=member.guild.name,inline=True)
   embed.color: 3447003
   embed.set_thumbnail(url=member.avatar_url)
-  general_channel = bot.get_channel(name="general")
-  logs = bot.get_channel(name="logs")
+  general_channel = discord.utils.get(ctx.guild.channels,name="general")
+  logs = discord.utils.get(ctx.guild.channels,name="logs")
   await general_channel.send(embed=embed)
   await logs.send(embed=embed)
 
@@ -251,8 +251,8 @@ async def on_member_leave(member: discord.Member):
   embed.add_field(name="Guild",value=member.guild.name,inline=True)
   embed.color: 3447003
   embed.set_thumbnail(url=member.avatar_url)
-  general_channel = bot.get_channel(name="general")
-  logs = bot.get_channel(name="logs")
+  general_channel = discord.utils.get(ctx.guild.channels,name="general")
+  logs = discord.utils.get(ctx.guild.channels,name="logs")
   await general_channel.send(embed=embed)
   await logs.send(embed=embed)
 c.execute("CREATE TABLE IF NOT EXISTS bank(User_ID BIGINT NOT NULL, Balance float)")
