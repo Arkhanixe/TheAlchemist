@@ -1,3 +1,12 @@
+#!/usr/bin/env python3.6
+# -*- coding: utf-8 -*-
+"""
+Command interface to controlling the sessions for each guild.
+
+
+https://github.com/rg3/youtube-dl/issues/17457
+https://github.com/rg3/youtube-dl/issues/17510
+"""
 import asyncio
 import logging
 import math
@@ -13,9 +22,9 @@ import discord
 import libneko
 import youtube_dl
 
-from shared import commands, traits
-from music import guildsession
-from music import request
+from neko2.shared import commands, traits
+from . import guildsession
+from . import request
 
 
 class NotInVoiceChat(commands.CheckFailure):

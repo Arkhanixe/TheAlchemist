@@ -47,7 +47,7 @@ class Economy:
 
 	@commands.group(invoke_without_command=True)
 	async def buy(self,ctx):
-		await ctx.send("You can do a!buy ship <count>")
+		pass
 
 	@buy.command(name = "ship")
 	async def buy_ship(self,ctx):
