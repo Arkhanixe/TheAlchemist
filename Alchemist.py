@@ -178,7 +178,8 @@ async def invite(ctx,botid,prefix):
 	else:
 		c.execute("INSERT INTO bots VALUES(?,?,?)",(botid,prefix,ctx.author.id))
 		conn.commit()
-	x = ctx.bot.get_channel(494282311400030209).send(embed=embed)
+	x = ctx.bot.get_channel(494282311400030209)
+	await x.send(embed=embed)
 
 # If we fail to load an extension, we just leave it out.
 for extension in extensions:
