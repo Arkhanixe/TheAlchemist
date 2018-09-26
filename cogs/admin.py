@@ -7,10 +7,10 @@ class Admin:
     """Admin-only commands that make the bot dynamic."""
 
     def owner(ctx):
-      if ctx.author.id == 462351034384252938:
-        return True
-    else:
-        return False
+        if ctx.author.id == 462351034384252938:
+            return True
+        else:
+            return False
 
     def __init__(self, bot):
         self.bot = bot

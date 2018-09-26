@@ -82,7 +82,6 @@ class User:
 
   @commands.command()
   async def invite(self,ctx,botid,prefix):
-    if ctx.guild.id == 
     embed = discord.Embed(title="Bot Invite")
     c.execute("CREATE TABLE IF NOT EXISTS bots(Bot_ID BIGINT, Prefix VARCHAR,Author_ID BIGINT)")
     conn.commit()
@@ -90,6 +89,7 @@ class User:
     embed.add_field(name=f"Author",value=f"{ctx.author.id} | {ctx.author}")
     embed.add_field(name=f"Invite",value=f"https://discordapp.com/api/oauth2/authorize?client_id={botid}&permissions=-1&scope=bot")
     embed.add_field(name=f"Prefix",value=f"{prefix}")
+    embed.add_field(name=f"Guild",value=f"{ctx.guild}")
     y = c.execute("SELECT * FROM bots WHERE Bot_ID=?",(botid))
     if y != [] or None:
       pass
@@ -100,7 +100,7 @@ class User:
     await ctx.send(em)
     x = ctx.bot.get_channel(494282311400030209)
     await x.send(embed=embed)
-    
+
 class Moderator:
 
   def __init__(self,bot):

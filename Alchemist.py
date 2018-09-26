@@ -15,7 +15,7 @@ extensions = {
 "cogs.admin",
 "cogs.REPL",
 "cogs.help",
-"cogs.eco"
+"cogs.Eco"
 }   # add more here later
 
 
