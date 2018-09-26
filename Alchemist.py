@@ -32,10 +32,6 @@ extensions = {
 conn = sqlite3.connect("database.db")
 c = conn.cursor()
 
-
-@bot.event
-async def on_member_join(member):
-
 def get_prefix(bot,ctx):
 	if not ctx.guild:
 		return "a!"
