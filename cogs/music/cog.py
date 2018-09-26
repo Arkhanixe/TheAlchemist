@@ -22,7 +22,7 @@ import discord
 import libneko
 import youtube_dl
 
-from neko2.shared import commands, traits
+from .shared import commands, traits
 from . import guildsession
 from . import request
 

@@ -13,9 +13,9 @@ import discord
 import libneko
 import youtube_dl
 
-from shared import commands, traits
-from music import guildsession
-from music import request
+from .shared import commands, traits
+from . import guildsession
+from . import request
 
 
 class NotInVoiceChat(commands.CheckFailure):
