@@ -33,6 +33,8 @@ conn = sqlite3.connect("database.db")
 c = conn.cursor()
 
 
+@bot.event
+async def on_member_join(member):
 
 def get_prefix(bot,ctx):
 	if not ctx.guild:
@@ -169,8 +171,8 @@ async def invite(ctx,botid,prefix):
 	c.execute("CREATE TABLE IF NOT EXISTS bots(Bot_ID BIGINT, Prefix VARCHAR,Author_ID BIGINT)")
 	conn.commit()
 	#Author
-	embed.add_field(name=f"Author",value=f"{ctx.author.id}")
-	embed.add_field(name=f"Invite",value=f"https://discordapp.com/api/oauth2/authorize?client_id={id}&permissions=-1&scope=bot")
+	embed.add_field(name=f"Author",value=f"{ctx.author.id} | {ctx.author}")
+	embed.add_field(name=f"Invite",value=f"https://discordapp.com/api/oauth2/authorize?client_id={botid}&permissions=-1&scope=bot")
 	embed.add_field(name=f"Prefix",value=f"{prefix}")
 	y = c.execute("SELECT * FROM bots WHERE Bot_ID=?",(botid))
 	if y != [] or None:
@@ -178,6 +180,8 @@ async def invite(ctx,botid,prefix):
 	else:
 		c.execute("INSERT INTO bots VALUES(?,?,?)",(botid,prefix,ctx.author.id))
 		conn.commit()
+	em = discord.Embed(description="Thank you for submitting your bot! You should get a dm within the next 24 hours if your bot has been accepted! Have a good day!")
+	await ctx.send(em)
 	x = ctx.bot.get_channel(494282311400030209)
 	await x.send(embed=embed)
 
@@ -213,20 +217,17 @@ async def on_ready():
 	await bot.change_presence(status=discord.Status.online,activity=game)
 	print(f"Playing {game}")
 
-@bot.listen()
+@bot.event
 async def on_member_join(ctx,member: discord.Member):
   embed=discord.Embed(timestamp = datetime.datetime.utcnow())
   embed.add_field(name="Name",value=member,inline=True)
   embed.add_field(name="Creation",value=member.created_at,inline=True)
   embed.color: 3447003
   embed.set_thumbnail(url=member.avatar_url)
-  a = discord.utils.get(ctx.guild.channels, name="general")
-  b = discord.utils.get(ctx.guild.channels, name="testing")
-  try:
-  	a.send(embed=embed)
-  except:
-  	b.send(embed=embed)
-
+  general_channel = ctx.bot.get_channel(494277342307549186)
+  logs = ctx.bot.get_channel(494281418894213151)
+  general_channel.send(embed=embed)
+  logs.send(embed=embed)
 c.execute("CREATE TABLE IF NOT EXISTS bank(User_ID BIGINT NOT NULL, Balance float)")
 conn.commit()
 
