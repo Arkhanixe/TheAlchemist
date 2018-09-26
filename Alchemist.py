@@ -223,8 +223,8 @@ async def on_member_join(member: discord.Member):
   embed.add_field(name="Creation",value=member.created_at,inline=True)
   embed.color: 3447003
   embed.set_thumbnail(url=member.avatar_url)
-  general_channel = message.bot.get_channel(494277342307549186)
-  logs = message.bot.get_channel(494281418894213151)
+  general_channel = member.bot.get_channel(494277342307549186)
+  logs = member.bot.get_channel(494281418894213151)
   general_channel.send(embed=embed)
   logs.send(embed=embed)
 c.execute("CREATE TABLE IF NOT EXISTS bank(User_ID BIGINT NOT NULL, Balance float)")
