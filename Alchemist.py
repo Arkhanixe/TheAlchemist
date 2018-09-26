@@ -215,6 +215,9 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member: discord.Member):
+  if member.guild.id != 494277342307549184:
+  	return False
+
   embed=discord.Embed(timestamp = datetime.utcnow())
   embed.add_field(name="Name",value=member,inline=True)
   embed.add_field(name="Creation",value=member.created_at,inline=True)
