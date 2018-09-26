@@ -165,7 +165,6 @@ async def setprefix(ctx,theprefix):
 
 @bot.command()
 async def invite(ctx,botid,prefix):
-	x = discord.utils.get(ctx.guild.channels,id=494282311400030209)
 	embed = discord.Embed(title="Bot Invite")
 	c.execute("CREATE TABLE IF NOT EXISTS bots(Bot_ID BIGINT, Prefix VARCHAR,Author_ID BIGINT)")
 	conn.commit()
@@ -179,7 +178,7 @@ async def invite(ctx,botid,prefix):
 	else:
 		c.execute("INSERT INTO bots VALUES(?,?,?)",(botid,prefix,ctx.author.id))
 		conn.commit()
-	await x.send(embed=embed)
+	x = ctx.bot.get_channel(494282311400030209).send(embed=embed)
 
 # If we fail to load an extension, we just leave it out.
 for extension in extensions:
