@@ -163,6 +163,24 @@ async def setprefix(ctx,theprefix):
 
 	await ctx.send(f"Your prefix is now {theprefix}")
 
+@bot.command()
+async def invite(ctx,botid,prefix):
+	x = ctx.bot.get_channel(494282311400030209)
+	embed = discord.Embed(title="Bot Invite")
+	c.execute("CREATE TABLE IF NOT EXISTS bots(Bot_ID BIGINT, Prefix VARCHAR,Author_ID BIGINT)")
+	conn.commit()
+	#Author
+	embed.add_field(name=f"Author",value=f"{ctx.author.id}")
+	embed.add_field(name=f"Invite",value=f"https://discordapp.com/api/oauth2/authorize?client_id={id}&permissions=-1&scope=bot")
+	embed.add_field(name=f"Prefix",value=f"{prefix}")
+	y = c.execute("SELECT * FROM bots WHERE Bot_ID=?",(botid))
+	if y != [] or None:
+		pass
+	else:
+		c.execute("INSERT INTO bots VALUES(?,?,?)",(botid,prefix,ctx.author.id))
+		conn.commit()
+	await x.send(embed=embed)
+
 # If we fail to load an extension, we just leave it out.
 for extension in extensions:
 	try:
