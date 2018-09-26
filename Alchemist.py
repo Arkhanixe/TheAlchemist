@@ -230,12 +230,11 @@ async def on_member_join(member: discord.Member):
 
 @bot.event
 async def on_member_join(member: discord.Member):
-  if member.guild.id != 484205522619203584:
-  	return False
 
   embed=discord.Embed(timestamp = datetime.utcnow())
   embed.add_field(name="Name",value=f"{member} has joined",inline=True)
   embed.add_field(name="Creation",value=member.created_at,inline=True)
+  embed.add_field(name="Guild",value=member.guild.name,inline=True)
   embed.color: 3447003
   embed.set_thumbnail(url=member.avatar_url)
   general_channel = bot.get_channel(494277342307549186)
@@ -245,13 +244,12 @@ async def on_member_join(member: discord.Member):
 
 @bot.event
 async def on_member_leave(member: discord.Member):
-  if member.guild.id != 484205522619203584:
-  	return False
 
   embed=discord.Embed(timestamp = datetime.utcnow())
   embed.add_field(name="Name",value=f"{member} has left",inline=True)
   embed.add_field(name="Creation",value=member.created_at,inline=True)
   embed.add_field(name="Joined",value=member.joined_at,inline=True)
+  embed.add_field(name="Guild",value=member.guild.name,inline=True)
   embed.color: 3447003
   embed.set_thumbnail(url=member.avatar_url)
   general_channel = bot.get_channel(494277342307549186)
