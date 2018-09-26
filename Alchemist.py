@@ -230,7 +230,7 @@ async def on_member_join(member: discord.Member):
 
 @bot.event
 async def on_member_join(member: discord.Member):
-  if member.guild.id != 494277342307549184:
+  if member.guild.id != 484205522619203584:
   	return False
 
   embed=discord.Embed(timestamp = datetime.utcnow())
@@ -245,7 +245,7 @@ async def on_member_join(member: discord.Member):
 
 @bot.event
 async def on_member_leave(member: discord.Member):
-  if member.guild.id != 494277342307549184:
+  if member.guild.id != 484205522619203584:
   	return False
 
   embed=discord.Embed(timestamp = datetime.utcnow())
