@@ -256,8 +256,8 @@ async def on_member_leave(member: discord.Member):
   embed.set_thumbnail(url=member.avatar_url)
   general_channel = bot.get_channel(494277342307549186)
   logs = bot.get_channel(494281418894213151)
-  general_channel.send(embed=embed)
-  logs.send(embed=embed)
+  await general_channel.send(embed=embed)
+  await logs.send(embed=embed)
 c.execute("CREATE TABLE IF NOT EXISTS bank(User_ID BIGINT NOT NULL, Balance float)")
 conn.commit()
 
