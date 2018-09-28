@@ -16,7 +16,7 @@ extensions = {
 "cogs.REPL",
 "cogs.help",
 "cogs.Eco",
-"cogs.playlist"
+
 }   # add more here later
 
 
