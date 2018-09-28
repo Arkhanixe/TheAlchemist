@@ -1,6 +1,7 @@
 import discord
 import datetime
 from discord.ext import commands
+import sqlite3
 
 """
 ***Discord Tutorial Server***
