@@ -61,12 +61,6 @@ async def on_message(message):
 		await message.channel.send(xprefix[0])
 
 
-@bot.event
-async def on_command_error(ctx,error):
-	embed = discord.Embed(title="Command Error",description=error)
-	print(error)
-
-
 # If we fail to load an extension, we just leave it out.
 for extension in extensions:
 	try:
