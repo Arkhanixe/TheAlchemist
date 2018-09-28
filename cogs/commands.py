@@ -2,7 +2,30 @@ import discord
 import datetime
 from discord.ext import commands
 
+"""
+***Discord Tutorial Server***
 
+***The Alchemist Workshop***
+The Alchemist Workshop is a server that helps people learn about bots. We are starting up right now but we will build ourselves up! We are encourage helpfulness as well as becoming an ally with other people in the community.
+      
+***We Offer***:
+- Helping make discord bots
+- Language tutorials
+- Custom economy system
+- Server is made how the users want it to be made
+- Self promotion
+- Also looking for tutorial writers of any language, discord or not
+
+***Invite Link***:
+https://discord.gg/jFeR6aE
+
+***Bot Invite***
+https://discordapp.com/api/oauth2/authorize?client_id=484204301862830090&permissions=-1&scope=bot
+
+
+"""
+conn = sqlite3.connect("database.db")
+c = conn.cursor()
 
 class User:
 

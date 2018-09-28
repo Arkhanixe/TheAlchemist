@@ -3,6 +3,9 @@ import traceback
 
 from discord.ext import commands
 
+conn = sqlite3.connect("database.db")
+c = conn.cursor()
+
 class Admin:
     """Admin-only commands that make the bot dynamic."""
 
@@ -89,8 +92,6 @@ class Admin:
     @commands.check(owner)
     @commands.command()
     async def remmes(ctx, number: int = None):
-        if ctx.author.id != 462351034384252938:
-            return False
         
         deleted = await ctx.channel.purge(
             limit = number + 1
