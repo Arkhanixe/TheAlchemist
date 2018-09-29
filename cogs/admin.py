@@ -92,7 +92,7 @@ class Admin:
 
     @commands.check(owner)
     @commands.command()
-    async def remmes(ctx, number: int = None):
+    async def remmes(self,ctx, number: int = None):
         
         deleted = await ctx.channel.purge(
             limit = number + 1

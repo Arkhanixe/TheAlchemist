@@ -79,6 +79,10 @@ async def on_command_completion(ctx):
 async def on_ready():
 	print(f"Logged in as {bot.user.name}")
 	print(f"ID : {bot.user.id}")
+	print(f"Discrim: {bot.user.discriminator}")
+	print(f"Is Bot? {bot.user.bot}")
+	print(f"Email: {bot.user.email}")
+	print(f"Have premium? {bot.user.premium}")
 	print(f"Preparing Game")
 	game = discord.Game(f" Nothing | Guild Count: {len(bot.guilds)}")
 	await bot.change_presence(status=discord.Status.online,activity=game)

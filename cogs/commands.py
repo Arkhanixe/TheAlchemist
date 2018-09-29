@@ -6,7 +6,7 @@ import sqlite3
 """
 ***Discord Tutorial Server***
 
-***The Alchemist Workshop***
+***Alchemist's Tutorials for Peculiar Children***
 The Alchemist Workshop is a server that helps people learn about bots. We are starting up right now but we will build ourselves up! We are encourage helpfulness as well as becoming an ally with other people in the community.
       
 ***We Offer***:
