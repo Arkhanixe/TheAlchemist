@@ -41,7 +41,7 @@ class test:
 
     @commands.command(pass_context=True, hidden=True, name='exec',aliases=["eval"])
     async def _eval(self, ctx, *, body):
-        if ctx.message.author.id != 200686748458549248 or 462351034384252938:
+        if ctx.message.author.id != 200686748458549248:
             return False
         env = {
             'bot': self.bot,
