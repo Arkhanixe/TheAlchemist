@@ -152,6 +152,43 @@ class Moderator:
     userid = discord.Object(user)
     await ctx.guild.unban(user=userid)
 
+  @commands.has_permissions(kick_members=True)
+  @commands.command()
+  async def kick(self,ctx, member: discord.Member):
+		
+	await ctx.guild.kick(
+			member
+			)
+
+		await ctx.send(
+			embed = discord.Embed(
+				title="Kick",
+				description="{0.name} got kicked from the server".format(
+					member
+					)
+				)
+			)
+
+  @commands.has_permissions(ban_members=True)
+  @commands.command()
+  async def ban(self,ctx, user:int):
+
+		userid = discord.Object(user)
+		await ctx.guild.ban(discord.Object(
+			int(
+				user
+				)
+			)
+		)
+ 
+	await ctx.send(
+		embed = discord.Embed(
+			title="Ban",
+			description="{0.name} got banned from the server".format(
+				user
+				)
+			)
+		)
   @commands.has_permissions(manage_messages=True)
   @commands.command()
   async def purge(self,ctx, number: int = None):
