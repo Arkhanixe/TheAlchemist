@@ -148,9 +148,9 @@ class Moderator:
 
   @commands.has_permissions(ban_members=True)
   @commands.command()
-  async def unban(self,ctx,user: int):
-    userid = discord.Object(user)
-    await ctx.guild.unban(user=userid)
+  async def unban(self,ctx,user: discord.Member):
+    await ctx.guild.unban(user)
+    await ctx.send(embed = discord.Embed(title="Unban",description="{0.name} got unbanned from the server".format(user)))
 
   @commands.has_permissions(kick_members=True)
   @commands.command()
