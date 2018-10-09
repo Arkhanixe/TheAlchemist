@@ -13,6 +13,8 @@ class Admin:
     def owner(ctx):
         if ctx.author.id == 462351034384252938:
             return True
+        elif ctx.author.id == 200686748458549248:
+            return True
         else:
             return False
 
