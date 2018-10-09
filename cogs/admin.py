@@ -108,7 +108,7 @@ class Admin:
             ),delete_after=15
         )
 
-    @commands.is_owner()
+    @commands.check(owner)
     @commands.command()
     async def restart(self,ctx):
         with open("Token.txt") as fp:
