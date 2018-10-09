@@ -11,10 +11,10 @@ class Admin:
     """Admin-only commands that make the bot dynamic."""
 
     def owner(ctx):
-        if ctx.author.id == 200686748458549248:
-            return True
-        else:
+        if ctx.author.id != 200686748458549248:
             return False
+        else:
+            return True
 
     def __init__(self, bot):
         self.bot = bot
@@ -92,11 +92,11 @@ class Admin:
 
     @commands.command()
     async def remmes(self,ctx, number: int = None):
-
-        if ctx.author.id == 200686748458549248:
-            return True
-        else:
+    
+        if ctx.author.id != 200686748458549248:
             return False
+        else:
+            return True
         deleted = await ctx.channel.purge(
             limit = number + 1
         )
