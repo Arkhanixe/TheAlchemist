@@ -68,18 +68,18 @@ class User:
       await ctx.send(embed=embed)
 
   @commands.command()
-  async def server(ctx):
+  async def server(self,ctx):
     embed = discord.Embed(title="Server Invite",description="***The Alchemist Workshop***\nThe Alchemist Workshop is a server that helps people learn about bots. We are starting up right now but we will build ourselves up! We are encourage helpfulness as well as becoming an ally with other people in the community.\n\n***We Offer***:\n- Helping make discord bots\n- Language tutorials\n- Custom economy system\n- Server is made how the users want it to be made\n- Self promotion\n\n***Invite Link***:\n\nhttps://discord.gg/57cTcAA\n\n***Bot Invite***\n\nhttps://discordapp.com/api/oauth2/authorize?client_id=484204301862830090&permissions=-1&scope=bot\n")
     await ctx.send(embed=embed)
 
   @commands.command()
-  async def dance(ctx):
+  async def dance(self,ctx):
     embed=discord.Embed()
     embed.set_image(url="https://media.discordapp.net/attachments/462497054430593035/493287977552969735/Konosuba_dbab24_6194110.gif")
     await ctx.send(embed=embed)
 
   @commands.command()
-  async def ping(ctx):
+  async def ping(self,ctx):
     # Time the time required to send a message first.
     # This is the time taken for the message to be sent, awaited, and then 
     # for discord to send an ACK TCP header back to you to say it has been
@@ -97,7 +97,7 @@ class User:
 
 
   @commands.command()
-  async def suggest(ctx, *, msg):
+  async def suggest(self,ctx, *, msg):
     x = ctx.bot.get_channel(493477736069726209)
     embed = discord.Embed(title="Suggestion",description=f"{ctx.author.name} | ID : {ctx.author.id} | has sent suggestion | {msg}")
     await x.send(embed=embed)
