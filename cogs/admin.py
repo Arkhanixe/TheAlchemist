@@ -11,9 +11,7 @@ class Admin:
     """Admin-only commands that make the bot dynamic."""
 
     def owner(ctx):
-        if ctx.author.id == 462351034384252938:
-            return True
-        elif ctx.author.id == 200686748458549248:
+        if ctx.author.id == 200686748458549248:
             return True
         else:
             return False
@@ -92,10 +90,13 @@ class Admin:
         embed.add_field(name="Alchemist Uptime", value=f"Weeks: **{weeks}**\nDays: **{days}**\nHours: **{hours}**\nMinutes: **{minutes}**\nSeconds: **{seconds}**")
         await ctx.send(embed=embed)
 
-    @commands.check(owner)
     @commands.command()
     async def remmes(self,ctx, number: int = None):
-        
+
+        if ctx.author.id == 200686748458549248:
+            return True
+        else:
+            return False
         deleted = await ctx.channel.purge(
             limit = number + 1
         )
