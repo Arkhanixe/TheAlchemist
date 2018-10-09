@@ -160,9 +160,8 @@ class Moderator:
 
   @commands.has_permissions(ban_members=True)
   @commands.command()
-  async def ban(self,ctx, user:int):
-    userid = discord.Object(user)
-    await ctx.guild.ban(discord.Object(int(user)))
+  async def ban(self,ctx, user: discord.Member):
+    await ctx.guild.ban(user)
     await ctx.send(embed = discord.Embed(title="Ban",description="{0.name} got banned from the server".format(user)))
 
   @commands.has_permissions(manage_messages=True)
