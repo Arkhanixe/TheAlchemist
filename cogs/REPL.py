@@ -20,20 +20,6 @@ from contextlib import redirect_stdout
 from some_paginator import Paginator
 import sqlite3
 
-def get_prefix(bot,ctx):
-	if not ctx.guild:
-		return "a!"
-	else:
-		xprefix = c.execute("SELECT prefix FROM my_prefix WHERE guild_id = ?",(ctx.guild.id,)).fetchall()
-		if xprefix == None:
-			return "a!"
-		if xprefix == []:
-			return "a!"
-		else:
-			return xprefix[0]
-
-bot = commands.Bot(command_prefix=(get_prefix))
-
 class test:
     def __init__(self, bot):
         self.bot = bot
