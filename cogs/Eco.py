@@ -8,6 +8,9 @@ import sqlite3
 
 from discord.ext import commands
 
+conn = sqlite3.connect("database.db")
+c = conn.cursor()
+
 class Economy:
 	
 	def __init__(self,bot):
