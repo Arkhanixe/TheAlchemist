@@ -20,8 +20,6 @@ from contextlib import redirect_stdout
 from some_paginator import Paginator
 import sqlite3
 
-bot = commands.Bot(command_prefix=["a!","A!"])
-
 class test:
     def __init__(self, bot):
         self.bot = bot
