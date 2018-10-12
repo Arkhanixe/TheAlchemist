@@ -4,26 +4,22 @@ from discord.ext import commands
 import sqlite3
 
 """
-***Discord Tutorial Server***
+The first bot of Project X. This bot has multiple features:
 
-***Alchemist's Tutorials for Peculiar Children***
-The Alchemist Workshop is a server that helps people learn about bots. We are starting up right now but we will build ourselves up! We are encourage helpfulness as well as becoming an ally with other people in the community.
-      
-***We Offer***:
-- Helping make discord bots
-- Language tutorials
-- Custom economy system
-- Server is made how the users want it to be made
-- Self promotion
-- Also looking for tutorial writers of any language, discord or not
++Custom Suggestions
++Moderation
++Economy
++Utility
++Custom Prefix
++Other commands
++Custom Pagination
 
-***Invite Link***:
-https://discord.gg/MjxqTwf
+Previous Owner: The Alchemist, started a bot. Recently, Alchemist has gone away, leaving his three trusted admins:
+Arkhan: A coder of many wonders he has helped out people better than anyone has before in project x. Sadly He has left project x to finish his school life.
 
-***Bot Invite***
-https://discordapp.com/api/oauth2/authorize?client_id=500154804954202124&permissions=-1&scope=bot
+Crystal: Coming in at the top 2, Crystal has a sweet personality. She is creative, smart, and helpful. She lingers here and there, but she is like dessert, you can't miss her when she is there
 
-
+Justin: The leader of the pack, Justin has put the most effort and time into the server and the bot. While he can be stubborn, he is also super helpful. A former mod of sebi, this guy is known for his many "Talents".
 """
 conn = sqlite3.connect("database.db")
 c = conn.cursor()
@@ -69,7 +65,9 @@ class User:
 
   @commands.command()
   async def server(self,ctx):
-    embed = discord.Embed(title="Server Invite",description="***The Alchemist Workshop***\nThe Alchemist Workshop is a server that helps people learn about bots. We are starting up right now but we will build ourselves up! We are encourage helpfulness as well as becoming an ally with other people in the community.\n\n***We Offer***:\n- Helping make discord bots\n- Language tutorials\n- Custom economy system\n- Server is made how the users want it to be made\n- Self promotion\n\n***Invite Link***:\nhttps://discord.gg/MjxqTwf\n\n***Bot Invite***\n\nhttps://discordapp.com/api/oauth2/authorize?client_id=500154804954202124&permissions=-1&scope=bot\n")
+    embed = discord.Embed(title="Server Invite",description='The first bot of Project X. This bot has multiple features:\n+Custom Suggestions\n+Moderation\n+Economy\n+Utility\n+Custom Prefix\n+Other commands\n+Custom Pagination\nPrevious Owner: The Alchemist, started a bot. Recently, Alchemist has gone away, leaving his three trusted admins:Arkhan: A coder of many wonders he has helped out people better than anyone has before in project x. Sadly He has left project x to finish his school life.\nCrystal: Coming in at the top 2, Crystal has a sweet personality. She is creative, smart, and helpful. She lingers here and there, but she is like dessert, you can't miss her when she is there\nJustin: The leader of the pack, Justin has put the most effort and time into the server and the bot. While he can be stubborn, he is also super helpful. A former mod of sebi, this guy is known for his many "Talents"'
+    embed.add_field(name="Server Invite Link",value="[Server Invite](https://discord.gg/MjxqTwf)",inline=True)
+    embed.add_field(name="Bot Invite",value="[Bot Invite](https://discordapp.com/api/oauth2/authorize?client_id=500154804954202124&permissions=-1&scope=bot)",inline=True)
     await ctx.send(embed=embed)
 
   @commands.command()
