@@ -21,7 +21,7 @@ The Alchemist Workshop is a server that helps people learn about bots. We are st
 https://discord.gg/MjxqTwf
 
 ***Bot Invite***
-https://discordapp.com/api/oauth2/authorize?client_id=484204301862830090&permissions=-1&scope=bot
+https://discordapp.com/api/oauth2/authorize?client_id=500154804954202124&permissions=-1&scope=bot
 
 
 """
@@ -69,7 +69,7 @@ class User:
 
   @commands.command()
   async def server(self,ctx):
-    embed = discord.Embed(title="Server Invite",description="***The Alchemist Workshop***\nThe Alchemist Workshop is a server that helps people learn about bots. We are starting up right now but we will build ourselves up! We are encourage helpfulness as well as becoming an ally with other people in the community.\n\n***We Offer***:\n- Helping make discord bots\n- Language tutorials\n- Custom economy system\n- Server is made how the users want it to be made\n- Self promotion\n\n***Invite Link***:\nhttps://discord.gg/MjxqTwf\n\n***Bot Invite***\n\nhttps://discordapp.com/api/oauth2/authorize?client_id=484204301862830090&permissions=-1&scope=bot\n")
+    embed = discord.Embed(title="Server Invite",description="***The Alchemist Workshop***\nThe Alchemist Workshop is a server that helps people learn about bots. We are starting up right now but we will build ourselves up! We are encourage helpfulness as well as becoming an ally with other people in the community.\n\n***We Offer***:\n- Helping make discord bots\n- Language tutorials\n- Custom economy system\n- Server is made how the users want it to be made\n- Self promotion\n\n***Invite Link***:\nhttps://discord.gg/MjxqTwf\n\n***Bot Invite***\n\nhttps://discordapp.com/api/oauth2/authorize?client_id=500154804954202124&permissions=-1&scope=bot\n")
     await ctx.send(embed=embed)
 
   @commands.command()
