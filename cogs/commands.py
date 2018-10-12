@@ -66,8 +66,8 @@ class User:
   @commands.command()
   async def server(self,ctx):
     embed = discord.Embed(title="Server Invite",description='The first bot of Project X. This bot has multiple features:\n+Custom Suggestions\n+Moderation\n+Economy\n+Utility\n+Custom Prefix\n+Other commands\n+Custom Pagination\nPrevious Owner: The Alchemist, started a bot. Recently, Alchemist has gone away, leaving his three trusted admins:Arkhan: A coder of many wonders he has helped out people better than anyone has before in project x. Sadly He has left project x to finish his school life.\nCrystal: Coming in at the top 2, Crystal has a sweet personality. She is creative, smart, and helpful. She lingers here and there, but she is like dessert, you can\'t miss her when she is there\nJustin: The leader of the pack, Justin has put the most effort and time into the server and the bot. While he can be stubborn, he is also super helpful. A former mod of sebi, this guy is known for his many "Talents"'
-    embed.add_field(name="Server Invite Link",value="[Server Invite](https://discord.gg/MjxqTwf)",inline=True)
-    embed.add_field(name="Bot Invite",value="[Bot Invite](https://discordapp.com/api/oauth2/authorize?client_id=500154804954202124&permissions=-1&scope=bot)",inline=True)
+    embed.add_field(name="Server Invite Link",value=f"https://discord.gg/MjxqTwf",inline=True)
+    embed.add_field(name="Bot Invite",value=f"https://discordapp.com/api/oauth2/authorize?client_id=500154804954202124&permissions=-1&scope=bot",inline=True)
     await ctx.send(embed=embed)
 
   @commands.command()
