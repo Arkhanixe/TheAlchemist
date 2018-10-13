@@ -105,9 +105,12 @@ async def on_message_edit(msg):
 	try:
 		ctx = await bot.get_context(msg)
 		await ctx.invoke()
+	except:
+		pass
 
 with open("Token.txt") as fp:
     token = fp.read().strip()
+
 bot.run(token)
 
 #Omega Cafe
