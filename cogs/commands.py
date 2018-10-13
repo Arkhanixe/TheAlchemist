@@ -13,7 +13,7 @@ The first bot of Project X. This bot has multiple features:
 +Other commands
 +Custom Pagination
 Previous Owner: The Alchemist, started a bot. Recently, Alchemist has gone away, leaving his three trusted admins:
-Arkhan: A coder of many wonders he has helped out people better than anyone has before in project x. Sadly He has left project x to finish his school life.
+Arune: A coder of many wonders he has helped out people better than anyone has before in project x. Sadly He has left project x to finish his school life.
 Crystal: Coming in at the top 2, Crystal has a sweet personality. She is creative, smart, and helpful. She lingers here and there, but she is like dessert, you can't miss her when she is there
 Justin: The leader of the pack, Justin has put the most effort and time into the server and the bot. While he can be stubborn, he is also super helpful. A former mod of sebi, this guy is known for his many "Talents".
 """
