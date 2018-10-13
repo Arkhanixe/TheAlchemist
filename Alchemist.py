@@ -100,9 +100,14 @@ async def help(ctx):
 		await ctx.send(embed = em)
 		
 """
+@bot.event
+async def on_message_edit(msg):
+	try:
+		ctx = await bot.get_context(msg)
+		await ctx.invoke()
+
 with open("Token.txt") as fp:
     token = fp.read().strip()
-
 bot.run(token)
 
 #Omega Cafe
