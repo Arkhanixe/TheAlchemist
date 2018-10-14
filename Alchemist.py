@@ -101,9 +101,9 @@ async def help(ctx):
 		
 """
 @bot.event
-async def on_message_edit(message):
+async def on_message_edit(before,after):
 	try:
-		msg = await bot.get_context(message)
+		msg = await bot.get_context(after)
 		await ctx.invoke(msg)
 	except:
 		pass
@@ -116,7 +116,7 @@ async def on_member_join(member):
 
 @bot.event
 async def on_member_leave(member):
-	embed = discord.Embed(title="Member:Left")
+	embed = discord.Embed(title="Member Left")
 	embed.add_field(name="User",value=member.name)
 	embed.set_footer(footer=datetime.now())
 
