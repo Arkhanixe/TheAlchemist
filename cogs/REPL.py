@@ -72,7 +72,7 @@ class test:
                 ret = await func()
         except Exception as e:
             value = stdout.getvalue()
-            embed = discord.Embed(description = "{}{}\n".format(value,traceback.format_exc()),color=0x20b2aa)
+            embed = discord.Embed(description = "{}{}\n".format(value,traceback.format_exc()),color="0x20b2aa")
             await ctx.send(embed=embed)
         else:
             value = stdout.getvalue()
