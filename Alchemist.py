@@ -117,7 +117,7 @@ async def on_member_join(member):
 		await channel.send(embed=embed)
 
 @bot.event
-async def on_member_leave(member):
+async def on_member_remove(member):
 	embed = discord.Embed(title="Member left")
 	embed.add_field(name="User",value=member.name)
 	embed.add_field(name="Time",value=datetime.now())
