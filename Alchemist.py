@@ -101,12 +101,24 @@ async def help(ctx):
 		
 """
 @bot.event
-async def on_message_edit(msg):
+async def on_message_edit(message):
 	try:
-		ctx = await bot.get_context(msg)
-		await ctx.invoke()
+		msg = await bot.get_context(message)
+		await ctx.invoke(msg)
 	except:
 		pass
+
+@bot.event
+async def on_member_join(member):
+	embed = discord.Embed(title="Member Joined")
+	embed.add_field(name="User",value=member.name)
+	embed.set_footer(footer=datetime.now())
+
+@bot.event
+async def on_member_leave(member):
+	embed = discord.Embed(title="Member:Left")
+	embed.add_field(name="User",value=member.name)
+	embed.set_footer(footer=datetime.now())
 
 with open("Token.txt") as fp:
     token = fp.read().strip()
