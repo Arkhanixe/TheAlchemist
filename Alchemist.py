@@ -107,22 +107,28 @@ async def on_member_join(member):
 	embed.add_field(name="User",value=member.name)
 	embed.add_field(name="Time",value=datetime.now())
 	try:
-		channel = discord.utils.get(bot.get_all_channels(), guild__name='Project X', name='general')
+		channel = discord.utils.get(member.guild.channels, name='general')
 		await channel.send(embed=embed)
 	except:
-		channel = discord.utils.get(bot.get_all_channels(), guild__name='Project X', name='bot-testing')
+		channel = discord.utils.get(member.guild.channels, name='bot-testing')
+		await channel.send(embed=embed)
+	except:
+		channel = discord.utils.get(member.guild.channels, name='bot-hell')
 		await channel.send(embed=embed)
 
 @bot.event
 async def on_member_leave(member):
-	embed = discord.Embed(title="Member Left")
+	embed = discord.Embed(title="Member left")
 	embed.add_field(name="User",value=member.name)
 	embed.add_field(name="Time",value=datetime.now())
 	try:
-		channel = discord.utils.get(bot.get_all_channels(), guild__name='Project X', name='general')
+		channel = discord.utils.get(member.guild.channels, name='general')
 		await channel.send(embed=embed)
 	except:
-		channel = discord.utils.get(bot.get_all_channels(), guild__name='Project X', name='bot-testing')
+		channel = discord.utils.get(member.guild.channels, name='bot-testing')
+		await channel.send(embed=embed)
+	except:
+		channel = discord.utils.get(member.guild.channels, name='bot-hell')
 		await channel.send(embed=embed)
 
 with open("Token.txt") as fp:
