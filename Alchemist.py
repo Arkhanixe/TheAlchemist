@@ -102,35 +102,72 @@ async def on_message_edit(before,after):
 		pass
 
 @bot.event
-async def on_member_join(member):
-	embed = discord.Embed(title="Member Joined")
-	embed.add_field(name="User",value=member.name)
-	embed.add_field(name="Time",value=datetime.now())
-	try:
-		channel = discord.utils.get(member.guild.channels, name='general')
-		await channel.send(embed=embed)
-	except:
-		channel = discord.utils.get(member.guild.channels, name='bot-testing')
-		await channel.send(embed=embed)
-	else:
-		channel = discord.utils.get(member.guild.channels, name='bot-hell')
-		await channel.send(embed=embed)
+    async def on_member_join(self, member):
+        try:
+            async with self.bot.pool.acquire() as conn:
+                guild, greetchan, autorole, greetcustom, greetembed = await conn.fetchrow(
+                    "SELECT guild, greetchan, autorole, greetmsg, greetembed FROM guilds WHERE guild = ($1)",
+                    member.guild.id,
+                )
+                if member.guild.id == guild:
+                    if greetchan is not 0:
+                        channel = self.bot.get_channel(greetchan)
+                        if greetcustom is "0":
+                            msg = f"Welcome to the guild {member.mention}!"
+                        else:
+                            msg = msg.replace(f"%user%", f"{member.mention}").replace(
+                                f"%members%", f"{len(member.guild.members)}"
+                            )
+                        if greetembed is True:
+                            embed = discord.Embed(colour=0xc71a, description=msg)
+                            embed.set_author(
+                                name="User Joined!", icon_url=member.guild.icon_url
+                            )
+                            embed.set_thumbnail(url=member.avatar_url)
+                            embed.set_footer(
+                                text=f"{member.guild.name} - {channel.name.title()}"
+                            )
+                            await channel.send(embed=embed)
+                        else:
+                            await channel.send(msg)
+                    if autorole is not 0:
+                        await member.add_roles(
+                            discord.utils.get(member.guild.roles, id=autorole)
+                        )
 
 @bot.event
 async def on_member_remove(member):
-	
-	embed = discord.Embed(title="Member left")
-	embed.add_field(name="User",value=member.name)
-	embed.add_field(name="Time",value=datetime.now())
-	try:
-		channel = discord.utils.get(member.guild.channels, name='general')
-		await channel.send(embed=embed)
-	except:
-		channel = discord.utils.get(member.guild.channels, name='bot-testing')
-		await channel.send(embed=embed)
-	else:
-		channel = discord.utils.get(member.guild.channels, name='bot-hell')
-		await channel.send(embed=embed)
+        try:
+            async with bot.pool.acquire() as conn:
+                guild, greetchan, autorole, greetcustom, greetembed = await conn.fetchrow(
+                    "SELECT guild, greetchan, autorole, greetmsg, greetembed FROM guilds WHERE guild = ($1)",
+                    member.guild.id,
+                )
+                if member.guild.id == guild:
+                    if greetchan is not 0:
+                        channel = self.bot.get_channel(greetchan)
+                        if greetcustom is "0":
+                            msg = f"Welcome to the guild {member.mention}!"
+                        else:
+                            msg = msg.replace(f"%user%", f"{member.mention}").replace(
+                                f"%members%", f"{len(member.guild.members)}"
+                            )
+                        if greetembed is True:
+                            embed = discord.Embed(colour=0xc71a, description=msg)
+                            embed.set_author(
+                                name="User left!", icon_url=member.guild.icon_url
+                            )
+                            embed.set_thumbnail(url=member.avatar_url)
+                            embed.set_footer(
+                                text=f"{member.guild.name} - {channel.name.title()}"
+                            )
+                            await channel.send(embed=embed)
+                        else:
+                            await channel.send(msg)
+                    if autorole is not 0:
+                        await member.add_roles(
+                            discord.utils.get(member.guild.roles, id=autorole)
+                        )
 
 with open("Token.txt") as fp:
     token = fp.read().strip()
