@@ -104,7 +104,7 @@ async def help(ctx):
 async def on_message_edit(before,after):
 	try:
 		msg = await bot.get_context(after)
-		await message.invoke(msg)
+		await msg.invoke()
 	except:
 		pass
 
@@ -112,13 +112,13 @@ async def on_message_edit(before,after):
 async def on_member_join(member):
 	embed = discord.Embed(title="Member Joined")
 	embed.add_field(name="User",value=member.name)
-	embed.set_footer(footer=datetime.now())
+	embed.add_field(name="Time",value=datetime.now())
 
 @bot.event
 async def on_member_leave(member):
 	embed = discord.Embed(title="Member Left")
 	embed.add_field(name="User",value=member.name)
-	embed.set_footer(footer=datetime.now())
+	embed.add_field(name="Time",value=datetime.now())
 
 with open("Token.txt") as fp:
     token = fp.read().strip()
