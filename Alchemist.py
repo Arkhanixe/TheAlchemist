@@ -104,7 +104,7 @@ async def help(ctx):
 async def on_message_edit(before,after):
 	try:
 		msg = await bot.get_context(after)
-		await ctx.invoke(msg)
+		await message.invoke(msg)
 	except:
 		pass
 
