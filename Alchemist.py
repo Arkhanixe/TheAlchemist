@@ -102,7 +102,7 @@ async def on_message_edit(before,after):
 		pass
 
 @bot.event
-    async def on_member_join(self, member):
+async def on_member_join(self, member):
         try:
             async with self.bot.pool.acquire() as conn:
                 guild, greetchan, autorole, greetcustom, greetembed = await conn.fetchrow(
