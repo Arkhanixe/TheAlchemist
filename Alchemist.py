@@ -69,13 +69,6 @@ for extension in extensions:
 		print(e)
 
 @bot.event
-async def on_command_completion(ctx):
-	try:
-		await ctx.message.delete()
-	except:
-		pass
-
-@bot.event
 async def on_ready():
 	print(f"Logged in as {bot.user.name}")
 	print(f"ID : {bot.user.id}")
@@ -114,10 +107,10 @@ async def on_member_join(member):
 	embed.add_field(name="User",value=member.name)
 	embed.add_field(name="Time",value=datetime.now())
 	try:
-		channel = discord.utils.get(client.get_all_channels(), guild__name='general')
+		channel = discord.utils.get(bot.get_all_channels(), guild__name='Project X', name='general')
 		await channel.send(embed=embed)
 	except:
-		channel = discord.utils.get(client.get_all_channels(), guild__name="bot-testing")
+		channel = discord.utils.get(bot.get_all_channels(), guild__name='Project X', name='bot-testing')
 		await channel.send(embed=embed)
 
 @bot.event
@@ -126,10 +119,10 @@ async def on_member_leave(member):
 	embed.add_field(name="User",value=member.name)
 	embed.add_field(name="Time",value=datetime.now())
 	try:
-		channel = discord.utils.get(client.get_all_channels(), guild__name='general')
+		channel = discord.utils.get(bot.get_all_channels(), guild__name='Project X', name='general')
 		await channel.send(embed=embed)
 	except:
-		channel = discord.utils.get(client.get_all_channels(), guild__name="bot-testing")
+		channel = discord.utils.get(bot.get_all_channels(), guild__name='Project X', name='bot-testing')
 		await channel.send(embed=embed)
 
 with open("Token.txt") as fp:
