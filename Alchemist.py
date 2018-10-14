@@ -109,10 +109,10 @@ async def on_member_join(member):
 	try:
 		channel = discord.utils.get(member.guild.channels, name='general')
 		await channel.send(embed=embed)
-	try:
+	except:
 		channel = discord.utils.get(member.guild.channels, name='bot-testing')
 		await channel.send(embed=embed)
-	except:
+	else:
 		channel = discord.utils.get(member.guild.channels, name='bot-hell')
 		await channel.send(embed=embed)
 
@@ -124,10 +124,10 @@ async def on_member_remove(member):
 	try:
 		channel = discord.utils.get(member.guild.channels, name='general')
 		await channel.send(embed=embed)
-	try:
+	except:
 		channel = discord.utils.get(member.guild.channels, name='bot-testing')
 		await channel.send(embed=embed)
-	except:
+	else:
 		channel = discord.utils.get(member.guild.channels, name='bot-hell')
 		await channel.send(embed=embed)
 
