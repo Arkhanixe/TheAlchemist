@@ -32,8 +32,6 @@ import re
 
 from libneko import commands, pag, converters
 
-from neko2.shared import theme
-
 static_re = re.compile(r"<:([^:]+):(\d+)>")
 animated_re = re.compile(r"<a:([^:]+):(\d+)>")
 
@@ -51,66 +49,6 @@ class GrandTheftEmojiCog:
                 break
 
         return animated, static, message
-
-    @commands.command(
-        brief="Steals emojis and sends to your inbox",
-        aliases=["loot", "swag", "pinch", "nick"],
-    )
-    async def steal(self, ctx, *, message=None):
-        """
-        Takes a message ID for the current channel, or if not, a string message containing
-        the emojis you want to steal. If you don't specify anything, I look through the
-        past 200 messages. Using `^` will have the same effect, and mostly exists for legacy
-        and/or muscle memory with other commands.
-        
-        I get all custom emojis in the message and send them to your inbox with links; this
-        way, you can download them or add them to your stamp collection or whatever the hell
-        you do for fun.
-        
-        Teach those Nitro users no more big government. Break their hearts out. FINISH THEM.
-        VIVA LA REVOLUTION!
-        """
-        if not message or message == "^":
-            animated, static, message = await self.find_emojis(ctx.channel, 200)
-        else:
-            try:
-                message = int(message)
-                message = await ctx.channel.get_message(message)
-            except ValueError:
-                message = ctx.message
-            finally:
-                animated = animated_re.findall(message.content)
-                static = static_re.findall(message.content)
-
-        if not static and not animated or not message:
-            return await ctx.send("No custom emojis could be found...", delete_after=10)
-
-        paginator = pag.Paginator(enable_truncation=False)
-
-        paginator.add_line(f"Emoji loot from {message.jump_url}")
-        paginator.add_line()
-
-        for name, id in static:
-            paginator.add_line(f" ⚝ {name}: https://cdn.discordapp.com/emojis/{id}.png")
-
-        for name, id in animated:
-            paginator.add_line(
-                f" ⚝ {name}: https://cdn.discordapp.com/emojis/{id}.gif <animated>"
-            )
-
-        async with ctx.typing():
-            for page in paginator.pages:
-                await ctx.author.send(page)
-
-        tot = len(animated) + len(static)
-        await ctx.send(
-            f'Check your DMs. You looted {tot} emoji{"s" if tot - 1 else ""}!',
-            delete_after=7.5,
-        )
-        try:
-            await ctx.message.delete()
-        except:
-            pass
 
     @staticmethod
     def transform_mute(emojis):
