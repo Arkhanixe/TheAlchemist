@@ -25,8 +25,8 @@ class User:
   def __init__(self,bot):
     self.bot = bot
 
-   @commands.command(aliases=["emojis"])
-    async def emojilibrary(self, ctx, arg=None):
+  @commands.command(aliases=["emojis"])
+  async def emojilibrary(self, ctx, arg=None):
         """Shows all emojis I can see ever. Pass the --verbose/-v flag to see names."""
         if arg:
             transform = self.transform_verbose
