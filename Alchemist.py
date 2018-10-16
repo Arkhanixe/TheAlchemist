@@ -16,6 +16,7 @@ extensions = {
 "cogs.REPL",
 "cogs.help",
 "cogs.Eco",
+"cogs.emoji"
 
 }   # add more here later
 
