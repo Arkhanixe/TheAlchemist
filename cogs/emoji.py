@@ -37,19 +37,7 @@ animated_re = re.compile(r"<a:([^:]+):(\d+)>")
 
 
 class GrandTheftEmojiCog:
-    @staticmethod
-    async def find_emojis(channel, limit):
-        animated, static, message = [], [], None
-
-        async for message in channel.history(limit=limit):
-            animated.extend(animated_re.findall(message.content))
-            static.extend(static_re.findall(message.content))
-
-            if animated or static:
-                break
-
-        return animated, static, message
-
+ 
     @staticmethod
     def transform_mute(emojis):
         return [str(emoji) + " " for emoji in emojis]
@@ -76,17 +64,6 @@ class GrandTheftEmojiCog:
             p += emoji
 
         p.start(ctx)
-
-    @commands.command(aliases=["search"])
-    async def searchemoji(self, ctx, emoji: converters.EmojiConverter):
-        """Gets an emoji I can see from any guild I am in..."""
-        embed = theme.generic_embed(
-            ctx, title=emoji.name, description=str(emoji), url=emoji.url
-        )
-        embed.set_footer(text=str(emoji.guild))
-        embed.set_image(url=emoji.url)
-        await ctx.send(embed=embed)
-
 
 def setup(bot):
     bot.add_cog(GrandTheftEmojiCog())
