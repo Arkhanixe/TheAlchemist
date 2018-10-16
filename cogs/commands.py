@@ -25,6 +25,22 @@ class User:
   def __init__(self,bot):
     self.bot = bot
 
+   @commands.command(aliases=["emojis"])
+    async def emojilibrary(self, ctx, arg=None):
+        """Shows all emojis I can see ever. Pass the --verbose/-v flag to see names."""
+        if arg:
+            transform = self.transform_verbose
+        else:
+            transform = self.transform_mute
+
+        emojis = transform(ctx.bot.emojis)
+
+        p = pag.StringNavigatorFactory()
+        for emoji in emojis:
+            p += emoji
+
+        p.start(ctx)
+
   @commands.command(pass_context=True)
   async def serverinfo(self,ctx):
         '''Get the server info'''
