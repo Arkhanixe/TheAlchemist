@@ -30,7 +30,7 @@ class User:
         """Shows all emojis I can see ever. Pass the --verbose/-v flag to see names."""
         emojis = ctx.bot.emojis
 
-        p = pag.StringNavigatorFactory()
+        p = paginator.StringNavigatorFactory()
         for emoji in emojis:
             p += emoji
 
