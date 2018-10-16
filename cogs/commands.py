@@ -28,11 +28,6 @@ class User:
   @commands.command(aliases=["emojis"])
   async def emojilibrary(self, ctx, arg=None):
         """Shows all emojis I can see ever. Pass the --verbose/-v flag to see names."""
-        if arg:
-            transform = self.transform_verbose
-        else:
-            transform = self.transform_mute
-
         emojis = transform(ctx.bot.emojis)
 
         p = pag.StringNavigatorFactory()
