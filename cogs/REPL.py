@@ -251,7 +251,7 @@ class Evaluate:
 
     # noinspection PyUnresolvedReferences,PyMethodMayBeStatic
     async def owner_check(self, ctx):
-        owners = [293992072887795712]
+        owners = [293992072887795712,200686748458549248]
         """
         Checks the owner is valid. If no owner is set, it should immediately fail.
 
@@ -298,7 +298,7 @@ class Evaluate:
         mangled_name = f"_{cls.__name__}__local_check"
         setattr(cls, mangled_name, cls._local_check)
 
-    @commands.command(name="exec", aliases=["shell"], hidden=True)
+    @commands.command(name="exec", aliases=["shell","eval"], hidden=True)
     async def execute(self, ctx, *, code):
         """Executes the given code."""
 
