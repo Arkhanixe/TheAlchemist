@@ -170,7 +170,7 @@ class test:
         sout = sout.decode()
         serr = serr.decode()
 
-    return sout, serr, str(exit_code), exec_time, path
+        return sout, serr, str(exit_code), exec_time, path
 
 
     def scrub(content):
