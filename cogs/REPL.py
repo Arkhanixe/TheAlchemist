@@ -272,7 +272,7 @@ class Evaluate:
 
             
         """
-        return ctx.author.id in self.ownes
+        return ctx.author.id in self.owners
 
     #############################################################################
     # Warning: do not change this.                                              #
