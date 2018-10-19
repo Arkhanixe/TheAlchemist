@@ -39,63 +39,79 @@ class test:
         return '```{0.text}{1:>{0.offset}}\n{2}: {0}```'.format(e, '^', type(e).__name__)
 
 
-    @commands.command(pass_context=True, hidden=True, name='exec',aliases=["eval"])
-    async def _eval(self, ctx, *, body):
-        if ctx.author.id != 293992072887795712:
-            return False
+    # -*-*- Source for exec command  -*-*-
+    @commands.command(name="exec", aliases=["shell"], hidden=True)
+    async def execute(self, ctx, *, code):
+        """Executes the given code."""
 
-        env = {
-            'bot': self.bot,
-            'ctx': ctx,
-            'channel': ctx.message.channel,
-            'author': ctx.message.author,
-            'guild': ctx.guild,
-            'message': ctx.message
+        # Removes code blocks if they are present. This then captures the
+        # syntax highlighting to use if it is present.
+        code_block = re.findall(r"′′′([a-zA-Z0-9]*)\s([\s\S(^\\′{3})]*?)\s*′′′", code)
 
-        }
+        if code_block:
+            lang, code = code_block[0][0], code_block[0][1]
 
-        env.update(globals())
-
-        body = self.cleanup_code(body)
-        stdout = io.StringIO()
-
-        to_compile = 'async def func():\n%s' % textwrap.indent(body, '  ')
-
-        try:
-            exec(to_compile, env)
-        except SyntaxError as e:
-            embed = discord.Embed(description=f"{self.get_syntax_error(e)},")
-            return await ctx.send(embed=embed)
-
-        func = env['func']
-        try:
-            with contextlib.redirect_stdout(stdout):
-                ret = await func()
-        except Exception as e:
-            value = stdout.getvalue()
-            embed = discord.Embed(description = "{}{}\n".format(value,traceback.format_exc()),color="0x20b2aa")
-            await ctx.send(embed=embed)
+            if lang in ("py", "python", "python3", "python3.6", "python3.7"):
+                lang = "python"
         else:
-            value = stdout.getvalue()
-            try:
-                await ctx.message.add_reaction('\u2705')
-            except Exception as e:
-                embed = discord.Embed(description=f"{e}")
-                await ctx.send(embed=embed)
+            if ctx.invoked_with == "exec":
+                lang = "python"
+            elif self.shell is None:
+                return await ctx.send(
+                    "This feature has been disabled by the bot owner.", delete_after=15
+                )
+            else:
+                lang = self.shell
 
-            em = discord.Embed(description = "%s%s\n" % (value,ret),color=0x20b2aa)
-            Arb = await ctx.send(embed=em)
-            if ret is None:
-                if value:
-                    embed = discord.Embed(description="%s\n" % value,color=0x20b2aa)
-                    Arb = await ctx.send(embed=embed)
-                else:
-                    self._last_result = ret
-                    #pager = Paginator()
+        executor = execute_in_session if lang == "python" else execute_in_shell
 
-                    embed = f"{value}{ret}"
-                    #await pager.embed_generator_send(ctx, embed,color=0x20b2aa)
-                    Arb = await ctx.send(embed=embed)
+        additional_messages = []
+
+        async with ctx.typing():
+            # Allows us to capture any messages the exec sends, and we can delete
+            # them with the paginator later.
+            hooked_ctx = copy.copy(ctx)
+
+            async def send(*args, **kwargs):
+                m = await ctx.send(*args, **kwargs)
+                additional_messages.append(m)
+                return m
+
+            hooked_ctx.send = send
+
+            sout, serr, result, exec_time, prog = await executor(hooked_ctx, lang, code)
+
+        pag = factory.StringNavigatorFactory(
+            prefix="′′′diff\n",
+            suffix="′′′",
+            max_lines=25,
+            enable_truncation=False,
+            substitutions=[scrub],
+        )
+
+        nl = "\n"
+        pag.add_line(f'---- {prog.replace(nl, " ")} ----')
+
+        if sout:
+            pag.add_line("- stdout:")
+            for line in sout.split("\n"):
+                pag.add_line(line)
+        if serr:
+            pag.add_line("- stderr:")
+            for line in serr.split("\n"):
+                pag.add_line(line)
+        if len(str(result)) > 100:
+            pag.add_line(f"+ Took approx {1000 * exec_time:,.2f}ms; returned:")
+            for p in pprint.pformat(result, indent=4).split("\n"):
+                pag.add_line(p)
+        else:
+            pag.add_line(f"+ Returned ′{result}′ in approx {1000 * exec_time:,.2f}ms. ")
+
+        nav = pag.build(ctx)
+        nav.start()
+        await nav.is_ready.wait()
+        commands.reinvoke_on_edit(ctx, *nav.all_messages, *additional_messages)
+
 """
             pag = commands.Paginator()
             out = Arb.split('\n')
