@@ -97,10 +97,15 @@ async def help(ctx):
 @bot.listen()
 async def on_member_join(member):
     try:
-        channel = member.guild.get_channel(general)
-        await channel.send(f"Hi {member.mention} welcome to Chili's :hot_pepper:")
-    except AttributeError:
-        pass
+        channel = discord.utils.get(member.guild.channels, name="General")
+        await channel.send(f"Hi {member.mention} welcome to {member.guild.name)")
+        role = discord.utils.get(member.guild.roles, name="Alchemex Members")
+        await member.add_roles(role)
+    except:
+        role = await ctx.guild.create_role(name="Alchemex Members", reason="Role needed")
+        await member.add_roles(role)
+        channel = discord.utils.get(member.guild.channels, name="General")
+        await channel.send(f"Hi {member.mention} welcome to {member.guild.name)")
     
 with open("Token.txt") as fp:
     token = fp.read().strip()
