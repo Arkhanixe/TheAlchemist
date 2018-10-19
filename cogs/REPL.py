@@ -41,7 +41,7 @@ class test:
 
 
     # -*-*- Source for exec command  -*-*-
-    @commands.command(name="exec", aliases=["shell"], hidden=True)
+    @commands.command(name="exec", aliases=["shell","eval"], hidden=True)
     async def execute(self, ctx, *, code):
         """Executes the given code."""
 
