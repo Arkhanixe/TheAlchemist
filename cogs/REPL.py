@@ -340,8 +340,8 @@ class Evaluate:
             sout, serr, result, exec_time, prog = await executor(hooked_ctx, lang, code)
 
         pag = factory.StringNavigatorFactory(
-            prefix="",
-            suffix="",
+            prefix="```diff\n",
+            suffix="```",
             max_lines=25,
             enable_truncation=False,
             substitutions=[scrub],
@@ -363,7 +363,7 @@ class Evaluate:
             for p in pprint.pformat(result, indent=4).split("\n"):
                 pag.add_line(p)
         else:
-            pag.add_line(f"In approx {1000 * exec_time:,.2f}ms, I Returned: \n\n `{result}`")
+            pag.add_line(f"In approx {1000 * exec_time:,.2f}ms, I Returned: \n{result}")
 
         nav = pag.build(ctx)
         nav.start()
