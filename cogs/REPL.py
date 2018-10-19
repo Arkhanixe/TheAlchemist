@@ -91,11 +91,11 @@ class test:
                     Arb = await ctx.send(embed=embed)
                 else:
                     self._last_result = ret
-                    pager = Paginator()
+                    #pager = Paginator()
 
                     embed = f"{value}{ret}"
-                    await pager.embed_generator_send(ctx, embed,color=0x20b2aa)
-                    #Arb = await ctx.send(embed=embed)
+                    #await pager.embed_generator_send(ctx, embed,color=0x20b2aa)
+                    Arb = await ctx.send(embed=embed)
 """
             pag = commands.Paginator()
             out = Arb.split('\n')
