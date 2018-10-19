@@ -121,9 +121,8 @@ async def on_member_remove(member):
         channel = discord.utils.get(member.guild.channels, name="general")
         await channel.send(embed=embed)
     except:
-	pass
-       
-    
+        pass
+
 with open("Token.txt") as fp:
     token = fp.read().strip()
 
