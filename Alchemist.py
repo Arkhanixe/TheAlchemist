@@ -94,13 +94,13 @@ async def help(ctx):
 		await ctx.send(embed = em)
 		
 """
-@bot.event
-async def on_message_edit(before,after):
-	try:
-		msg = await bot.get_context(after)
-		await msg.invoke()
-	except:
-		pass
+@bot.listen()
+async def on_member_join(member):
+    try:
+        channel = member.guild.get_channel(general)
+        await channel.send(f"Hi {member.mention} welcome to Chili's :hot_pepper:")
+    except AttributeError:
+        pass
     
 with open("Token.txt") as fp:
     token = fp.read().strip()
