@@ -13,6 +13,7 @@ import traceback
 import inspect
 import textwrap
 import io
+import re
 from discord import opus
 from datetime import datetime
 from discord.ext import commands
