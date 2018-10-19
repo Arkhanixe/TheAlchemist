@@ -96,7 +96,7 @@ async def help(ctx):
 """
 @bot.listen()
 async def on_member_join(member):
-    embed = discord.Embed(title=f"{member.display_name}",color=0x00FF00)	
+    embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0x00FF00)	
     embed.add_field(name=f"Creation Date",value=f"{member.created_at.strftime('%B %d, %Y %I:%M %p')}",inline=True)
     embed.add_field(name=f"Join Date", value=f"{member.joined_at.strftime('%B %d, %Y %I:%M %p')}",inline=True)
     embed.set_author(name="Member Joined",icon_url=member.avatar_url)
@@ -113,7 +113,7 @@ async def on_member_join(member):
 
 @bot.listen()
 async def on_member_remove(member):
-    embed = discord.Embed(title=f"{member.display_name}",color=0xFF0000)	
+    embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0xFF0000)	
     embed.add_field(name=f"Creation Date",value=f"{member.created_at.strftime('%B %d, %Y %I:%M %p')}",inline=True)
     embed.add_field(name=f"Join Date", value=f"{member.joined_at.strftime('%B %d, %Y %I:%M %p')}",inline=True)
     embed.set_author(name="Member left",icon_url=member.avatar_url)
