@@ -40,6 +40,147 @@ class test:
         return '```{0.text}{1:>{0.offset}}\n{2}: {0}```'.format(e, '^', type(e).__name__)
 
 
+    async def execute_in_session(ctx, program, code):
+        """|coro|
+
+        Executes the given code in the current interpreter session.
+
+        Arguments:
+            ctx:
+                the command invocation context. This is used to get a reference to the bot
+                which is injected into scope when ``exec``ing the contents of ``code``.
+            program:
+                the program name. This is unused for this implementation.
+            code:
+                the raw source code to execute.
+
+        Warning:
+            This method provides no user validation or verification. Unless you implement
+            it yourself, it will allow anyone to use it. Consider using the cog for a
+            working safer implementation.
+
+        Returns:
+            A 4-tuple containing stdout (string), stderr (string), the exit code (int) and the
+            time taken to run the command (float).
+
+        """
+        sout = io.StringIO()
+        serr = io.StringIO()
+
+        nl = "\n"
+
+        # Redirect all streams.
+        with contextlib.redirect_stdout(sout):
+            with contextlib.redirect_stderr(serr):
+
+                start_time = float("nan")
+
+                # noinspection PyBroadException
+                try:
+                    # Intrinsics to eval the line where possible if it is one line.
+                    # This will implicitly cause the result of await expressions to be
+                    # awaited, which is cool. Downside of this is we have to compile twice.
+
+                    try:
+                        abstract_syntax_tree = ast.parse(
+                            code, filename=f"{ctx.guild}{ctx.channel.mention}.py"
+                        )
+
+                        node: list = abstract_syntax_tree.body
+
+                        # If we have an expr node as the root, automatically append on a
+                        # call to return to implicitly return the expr'ed value.
+                        if node and type(node[0]) is ast.Expr:
+                            code = f"return " + code.strip()
+
+                    except:
+                        pass
+
+                    func = (
+                        "async def aexec(ctx, bot):\n"
+                        f'{nl.join(((" " * 4) + line) for line in code.split(nl))}'
+                    )
+
+                    start_time = time.monotonic()
+                    exec(func, modules, locals())
+
+                    result = await locals()["aexec"](ctx, ctx.bot)
+                    if hasattr(result, "__await__"):
+                        print(f"Returned awaitable {result}. Awaiting it.", file=sys.stderr)
+                        result = await result
+                except BaseException as ex:
+                    traceback.print_exc()
+                    result = type(ex)
+                finally:
+                    exec_time = time.monotonic() - start_time
+
+        return (
+            sout.getvalue(),
+            serr.getvalue(),
+            result,
+            exec_time,
+            f'Python {sys.version.replace(nl, " ")}',
+        )
+
+
+    # noinspection PyUnusedLocal
+    async def execute_in_shell(ctx, program, code):
+        """|coro|
+
+        Executes the given code in a separate process, using the given program as an interpreter.
+
+        Arguments:
+            ctx:
+                the command invocation context. Unused.
+            program:
+                the program name. This will be resolved by the OS by traversing any directories in
+                the current working directory, and the ``PATH`` environment variable. This may
+                alternatively be an absolute path to an executable.
+            code:
+                the raw source code to execute.
+    
+        Warning:
+            This method provides no user validation or verification. Unless you implement
+            it yourself, it will allow anyone to use it. Consider using the cog for a
+            working safer implementation.
+
+        Returns:
+                A 4-tuple containing stdout (string), stderr (string), the exit code (int) and the
+                time taken to run the command (float).
+        """
+
+        path = shutil.which(program)
+        if not path:
+            return "", f"{program} not found.", 127, 0.0, ""
+
+        start_time = time.monotonic()
+        process = await asyncio.create_subprocess_exec(
+            path,
+            "--",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            stdin=asyncio.subprocess.PIPE,
+        )
+
+        sout, serr = await process.communicate(bytes(code, "utf-8"))
+        exec_time = time.monotonic() - start_time
+
+        exit_code = process.returncode
+
+        sout = sout.decode()
+        serr = serr.decode()
+
+    return sout, serr, str(exit_code), exec_time, path
+
+
+    def scrub(content):
+        """Replaces triple back ticks with triple grave accents."""
+        return content.replace(
+            "\N{GRAVE ACCENT}" * 3, "\N{MODIFIER LETTER GRAVE ACCENT}" * 3
+        )
+
+
+
     # -*-*- Source for exec command  -*-*-
     @commands.command(name="exec", aliases=["shell","eval"], hidden=True)
     async def execute(self, ctx, *, code):
