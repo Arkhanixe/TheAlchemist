@@ -106,8 +106,6 @@ async def on_member_join(member):
         role = discord.utils.get(member.guild.roles, name="Alchemex Members")
         await member.add_roles(role)
     except:
-        role = await member.guild.create_role(name="Alchemex Members", reason="Role needed")
-        await member.add_roles(role)
         channel = discord.utils.get(member.guild.channels, name="general")
         await channel.send(embed=embed)
 
