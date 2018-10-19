@@ -44,6 +44,9 @@ class test:
         if ctx.author.id != 293992072887795712:
             return False
 
+        def __init__(self,bot):
+            bot = self.bot
+
         env = {
             'bot': self.bot,
             'ctx': ctx,
@@ -91,7 +94,7 @@ class test:
                     Arb = await ctx.send(embed=embed)
                 else:
                     self._last_result = ret
-                    pager = Paginator(bot)
+                    pager = Paginator()
 
                     embed = f"{value}{ret}"
                     await pager.embed_generator_send(ctx, embed,color=0x20b2aa)
