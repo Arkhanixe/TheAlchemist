@@ -98,7 +98,7 @@ async def help(ctx):
 async def on_member_join(member):
     embed = discord.Embed(title="{member.display_name}",color=0x00FF00)	
     embed.add_field(name=f"Creation Date",value=f"{member.created_at.strftime('%B %d, %Y at %I:%M %p')}",inline=True)
-    embed.add_field(name=f"Join Date", value=f"{user.joined_at.strftime('%B %d, %Y at %I:%M %p')}")
+    embed.add_field(name=f"Join Date", value=f"{member.joined_at.strftime('%B %d, %Y at %I:%M %p')}")
     embed.set_author(name="Member Joined",icon_url=member.avatar_url)
     try:
         channel = discord.utils.get(member.guild.channels, name="general")
@@ -110,6 +110,19 @@ async def on_member_join(member):
         await member.add_roles(role)
         channel = discord.utils.get(member.guild.channels, name="general")
         await channel.send(embed=embed)
+
+@bot.listen()
+async def on_member_remove(member):
+    embed = discord.Embed(title="{member.display_name}",color=0xFF0000)	
+    embed.add_field(name=f"Creation Date",value=f"{member.created_at.strftime('%B %d, %Y at %I:%M %p')}",inline=True)
+    embed.add_field(name=f"Join Date", value=f"{member.joined_at.strftime('%B %d, %Y at %I:%M %p')}")
+    embed.set_author(name="Member left",icon_url=member.avatar_url)
+    try:
+        channel = discord.utils.get(member.guild.channels, name="general")
+        await channel.send(embed=embed)
+    except:
+	pass
+       
     
 with open("Token.txt") as fp:
     token = fp.read().strip()
