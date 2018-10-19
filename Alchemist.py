@@ -124,7 +124,8 @@ async def on_member_remove(member):
 @bot.listen()
 async def on_guild_join(guild):
 	embed = discord.Embed(Title="Joined Guild",description=f"Thank you for inviting me! My name is Alchemex. My prefix is <a!>. My help server is a!server. Have a nice day! \nAlchemex Creators")
-	
+	channel = discord.utils.get(guild.channels, name="general")
+	await channel.send(embed=embed)
 	
 
 with open("Token.txt") as fp:
