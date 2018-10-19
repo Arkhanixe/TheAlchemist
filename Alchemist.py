@@ -97,8 +97,8 @@ async def help(ctx):
 @bot.listen()
 async def on_member_join(member):
     embed = discord.Embed(title=f"{member.display_name} Joined",color=0x00FF00)	
-    embed.add_field(name=f"Creation Date",value=f"{member.created_at}")
-    embed.set_footer(url=ctx.author.avatar_url)
+    embed.add_field(name=f"Creation Date",value=f"{member.created_at}",inline=True)
+    embed.set_footer(url=member.avatar_url)
     try:
         channel = discord.utils.get(member.guild.channels, name="general")
         await channel.send(embed=embed)
