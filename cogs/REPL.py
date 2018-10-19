@@ -363,7 +363,7 @@ class Evaluate:
             for p in pprint.pformat(result, indent=4).split("\n"):
                 pag.add_line(p)
         else:
-            pag.add_line(f"+In approx {1000 * exec_time:,.2f}ms, I Returned: \n- {result}")
+            pag.add_line(f"+ In approx {1000 * exec_time:,.2f}ms, I Returned: \n- {result}")
 
         nav = pag.build(ctx)
         nav.start()
