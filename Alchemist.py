@@ -96,16 +96,19 @@ async def help(ctx):
 """
 @bot.listen()
 async def on_member_join(member):
+    embed = discord.Embed(title=f"{member.display_name} Joined",color=0x00FF00)	
+    embed.add_field(name=f"Creation Date",value=f"{member.created_at}",Inline=True)
+    embed.set_footer(url=ctx.author.avatar_url)
     try:
         channel = discord.utils.get(member.guild.channels, name="general")
-        await channel.send(f"{member.mention}, Welcome to {member.guild.name}")
+        await channel.send(embed=embed)
         role = discord.utils.get(member.guild.roles, name="Alchemex Members")
         await member.add_roles(role)
     except:
         role = await ctx.guild.create_role(name="Alchemex Members", reason="Role needed")
         await member.add_roles(role)
         channel = discord.utils.get(member.guild.channels, name="general")
-        await channel.send(f"{member.mention}, Welcome to {member.guild.name}")
+        await channel.send(embed=embed)
     
 with open("Token.txt") as fp:
     token = fp.read().strip()
