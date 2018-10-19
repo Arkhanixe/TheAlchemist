@@ -44,9 +44,6 @@ class test:
         if ctx.author.id != 293992072887795712:
             return False
 
-        def __init__(self,bot):
-            bot = self.bot
-
         env = {
             'bot': self.bot,
             'ctx': ctx,
