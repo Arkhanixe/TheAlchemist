@@ -165,7 +165,7 @@ class Moderator:
   async def kick(self,ctx, member: discord.Member, reason): 
     await ctx.guild.kick(member)
     if reason == None:
-      await ctx.send(embed = discord.Embed(title="User Kicked",description=f"Moderator: {ctx.author.mention} kicked {member.mention} from the server for no reason",color=0xFF0000)  
+      await ctx.send(embed = discord.Embed(title="User Kicked",description=f"Moderator: {ctx.author.mention} kicked {member.mention} from the server for no reason",color=0xFF0000)) 
     else:
       await ctx.send(embed = discord.Embed(title="User Kicked",description=f"{member.name} got kicked from the server for {reason}",color=0xFF0000))
 
@@ -174,7 +174,7 @@ class Moderator:
   async def ban(self,ctx, user: discord.Member,reason):
     await ctx.guild.ban(user)
     if reason == None:
-      await ctx.send(embed = discord.Embed(title="User Banned",description=f"Moderator: {ctx.author.mention} banned {member.mention} from the server for no reason",color=0xFF0000) 
+      await ctx.send(embed = discord.Embed(title="User Banned",description=f"Moderator: {ctx.author.mention} banned {member.mention} from the server for no reason",color=0xFF0000)) 
     else:
       await ctx.send(embed = discord.Embed(title="User Banned",description=f"{member.name} got kicked from the server for {reason}",color=0xFF0000))
 
