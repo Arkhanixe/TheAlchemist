@@ -204,7 +204,7 @@ class Moderator:
   @commands.command()
   async def getcode(self,ctx, command):
           '''getting the code for command'''
-          a=inspect.getsource(bot.get_command(command).callback)
+          a = inspect.getsource(self.bot.get_command(command).callback)
           embed = discord.Embed(title=command,description=f"```py\n{a}```")
           await ctx.send(embed=embed)
 
