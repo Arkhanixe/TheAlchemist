@@ -185,6 +185,13 @@ class Moderator:
 
     await ctx.send(f"Your prefix is now {theprefix}")
 
+  @commands.command()
+  async def getcode(ctx, command):
+          '''getting the code for command'''
+          a=inspect.getsource(bot.get_command(command).callback)
+          embed = discord.Embed(title=command,description=f"```py\n{a}```")
+          await ctx.send(embed=embed)
+
 def setup(bot):
     bot.add_cog(User(bot))
     bot.add_cog(Moderator(bot))
