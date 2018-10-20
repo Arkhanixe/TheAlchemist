@@ -6,6 +6,7 @@ import copy
 import discord
 import importlib
 import io
+import inspect
 import logging
 import os
 import pprint
