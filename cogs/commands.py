@@ -162,15 +162,20 @@ class Moderator:
 
   @commands.has_permissions(kick_members=True)
   @commands.command()
-  async def kick(self,ctx, member: discord.Member): 
+  async def kick(self,ctx, member: discord.Member, *, reason): 
     await ctx.guild.kick(member)
-    await ctx.send(embed = discord.Embed(title="Kick",description="{0.name} got kicked from the server".format(member)))
+    if reason == None:
+      await ctx.send(embed = discord.Embed(title="User Kicked",description="Moderator: {ctx.author.mention} kicked {member.mention} from the server for no reason",color=0xFF0000) 
+    await ctx.send(embed = discord.Embed(title="Kick",description="{member.name} got kicked from the server for {reason}",color=0xFF0000))
 
   @commands.has_permissions(ban_members=True)
   @commands.command()
   async def ban(self,ctx, user: discord.Member):
     await ctx.guild.ban(user)
-    await ctx.send(embed = discord.Embed(title="Ban",description="{0.name} got banned from the server".format(user)))
+    if reason == None:
+      await ctx.send(embed = discord.Embed(title="User Banned",description="Moderator: {ctx.author.mention} banned {member.mention} from the server for no reason",color=0xFF0000) 
+    await ctx.send(embed = discord.Embed(title="Kick",description="{member.name} got kicked from the server for {reason}",color=0xFF0000))
+
 
   @commands.has_permissions(manage_messages=True)
   @commands.command()
@@ -200,13 +205,6 @@ class Moderator:
       conn.commit()
 
     await ctx.send(f"Your prefix is now {theprefix}")
-
-  @commands.command()
-  async def getcode(self,ctx, command):
-          '''getting the code for command'''
-          a = inspect.getsource(self.bot.get_command(command).callback)
-          embed = discord.Embed(title=command,description=f"```py\n{a}```")
-          await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(User(bot))
