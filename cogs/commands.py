@@ -202,7 +202,7 @@ class Moderator:
     await ctx.send(f"Your prefix is now {theprefix}")
 
   @commands.command()
-  async def getcode(ctx, command):
+  async def getcode(self,ctx, command):
           '''getting the code for command'''
           a=inspect.getsource(bot.get_command(command).callback)
           embed = discord.Embed(title=command,description=f"```py\n{a}```")
