@@ -1,7 +1,22 @@
+import ast
+import asyncio
+import collections
+import contextlib
+import copy
 import discord
-import datetime
-from discord.ext import commands
+import importlib
+import io
+import logging
+import os
+import pprint
+import re
+import shutil
 import sqlite3
+import sys
+import time
+import traceback
+
+from discord.ext import commands
 
 """
 The first bot of Project X. This bot has multiple features:
