@@ -63,7 +63,7 @@ async def on_message(message):
 	
 	if message.content.startswith("a!"):
 		with open("command_use.txt","a+") as f:
-			f.write(f"{message.author.display_name} | {datetime.now()}\n{message.content}\n\n")
+			f.write(f"{message.author.display_name} | {datetime.strftime("%B %d, %Y at %I:%M:%S")}\n{message.content}\n\n")
 
 
 # If we fail to load an extension, we just leave it out.
