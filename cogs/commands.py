@@ -196,18 +196,18 @@ class Moderator:
         ), delete_after=15
       )
 
-  @commands.has_permissions(ban_members=True)
-  @commands.command()
-  async def setprefix(self,ctx,theprefix):
-    x = c.execute("SELECT prefix FROM my_prefix WHERE guild_id=?",(ctx.guild.id,)).fetchall()
-    if x != [] or None:
-      c.execute("UPDATE my_prefix SET prefix = ? WHERE guild_id = ?",(theprefix,ctx.guild.id))
-      conn.commit()
-    else:
-      c.execute("INSERT INTO my_prefix VALUES(?,?)",(theprefix,ctx.guild.id))
-      conn.commit()
+   @commands.has_permissions(ban_members=True)
+   @commands.command()
+   async def setprefix(self,ctx,theprefix):
+      x = c.execute("SELECT prefix FROM my_prefix WHERE guild_id=?",(ctx.guild.id,)).fetchall()
+      if x != [] or None:
+        c.execute("UPDATE my_prefix SET prefix = ? WHERE guild_id = ?",(theprefix,ctx.guild.id))
+        conn.commit()
+      else:
+        c.execute("INSERT INTO my_prefix VALUES(?,?)",(theprefix,ctx.guild.id))
+        conn.commit()
 
-    await ctx.send(f"Your prefix is now {theprefix}")
+      await ctx.send(f"Your prefix is now {theprefix}")
 
 def setup(bot):
     bot.add_cog(User(bot))
