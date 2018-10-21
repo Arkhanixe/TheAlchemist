@@ -132,6 +132,11 @@ class User:
     await ctx.send(em)
     x = ctx.bot.get_channel(494282311400030209)
     await x.send(embed=embed)
+  
+  @commands.command()
+  async def git(self,ctx):
+    embed = discord.Embed(title="Github Link",description=f"[Project X](https://github.com/ProjectXTeam/TheAlchemist/)",color=0x00FF00)
+    await ctx.send(embed=embed)
 
 class Moderator:
 
@@ -178,7 +183,6 @@ class Moderator:
     else:
       await ctx.send(embed = discord.Embed(title="User Banned",description=f"{member.name} got kicked from the server for {reason}",color=0xFF0000))
 
-
   @commands.has_permissions(manage_messages=True)
   @commands.command()
   async def purge(self,ctx, number: int = None):
@@ -196,9 +200,9 @@ class Moderator:
         ), delete_after=15
       )
 
-   @commands.has_permissions(ban_members=True)
-   @commands.command()
-   async def setprefix(self,ctx,theprefix):
+  @commands.has_permissions(ban_members=True)
+  @commands.command()
+  async def setprefix(self,ctx,theprefix):
       x = c.execute("SELECT prefix FROM my_prefix WHERE guild_id=?",(ctx.guild.id,)).fetchall()
       if x != [] or None:
         c.execute("UPDATE my_prefix SET prefix = ? WHERE guild_id = ?",(theprefix,ctx.guild.id))
