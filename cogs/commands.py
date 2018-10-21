@@ -196,7 +196,7 @@ class Moderator:
         ), delete_after=15
       )
 
-  @commands.has_permissions(manage_guild=True)
+  @commands.has_permissions(adminstrator=True)
   @commands.command()
   async def setprefix(self,ctx,theprefix):
     x = c.execute("SELECT prefix FROM my_prefix WHERE guild_id=?",(ctx.guild.id,)).fetchall()
