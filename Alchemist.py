@@ -63,7 +63,7 @@ async def on_message(message):
 	
 	if message.content.startswith("a!"):
 		with open("command_use.txt","a+") as f:
-			f.write(f"{message.author.display_name} | {datetime.strftime("%B %d, %Y at %I:%M:%S")}\n{message.content}\n\n")
+			f.write(f"{message.author.display_name} | {datetime.strftime('%B %d, %Y at %I:%M:%S')}\n{message.content}\n\n")
 
 
 # If we fail to load an extension, we just leave it out.
@@ -101,8 +101,8 @@ async def help(ctx):
 @bot.listen()
 async def on_member_join(member):
     embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0x00FF00)	
-    embed.add_field(name=f"Creation Date",value=f"{member.created_at.strftime('%B %d, %Y')}",inline=True)
-    embed.add_field(name=f"Join Date", value=f"{member.joined_at.strftime('%B %d, %Y')}",inline=True)
+    embed.add_field(name=f"Creation Date",value=f"{member.created_at.strftime(%B %d, %Y)}",inline=True)
+    embed.add_field(name=f"Join Date", value=f"{member.joined_at.strftime(%B %d, %Y)}",inline=True)
     embed.set_author(name="Member Joined",icon_url=member.avatar_url)
     try:
         channel = discord.utils.get(member.guild.channels, name="general")
