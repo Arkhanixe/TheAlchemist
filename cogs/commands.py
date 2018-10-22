@@ -134,8 +134,26 @@ class User:
     await x.send(embed=embed)
   
   @commands.command()
-  async def git(self,ctx):
-    embed = discord.Embed(title="Github Link",description=f"[Project X](https://github.com/ProjectXTeam/TheAlchemist/)",color=0x00FF00)
+  async def github(self,ctx):
+    embed = discord.Embed(title="Github Link",description="[Project X](https://github.com/ProjectXTeam/TheAlchemist/)",color=0x00FF00)
+    await ctx.send(embed=embed)
+    
+  @commands.command()
+  async def count(self,ctx):
+    bots = 0
+    members = 0
+    total = 0
+    for x in ctx.guild.members:
+     if x.bot == True:
+        bots += 1
+        total += 1
+     else:
+        members += 1
+        total += 1
+    embed = discord.Embed(title="Server Member Count",color=0x0000FF)
+    embed.add_field(name="Bot Count",value=bots)
+    embed.add_field(name="Member Count",value=members)
+    embed.add_field(name="Total",value=total)
     await ctx.send(embed=embed)
 
 class Moderator:
@@ -212,6 +230,7 @@ class Moderator:
         conn.commit()
 
       await ctx.send(f"Your prefix is now {theprefix}")
+
 
 def setup(bot):
     bot.add_cog(User(bot))
