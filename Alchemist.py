@@ -12,10 +12,10 @@ import os
 
 extensions = {
 "cogs.commands",
-"cogs.admin",
+#False "cogs.admin",
 "cogs.REPL",
 "cogs.help",
-"cogs.Eco",
+#Broken "cogs.Eco",
 "cogs.emoji"
 
 }   # add more here later
