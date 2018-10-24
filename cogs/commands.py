@@ -57,7 +57,8 @@ class User:
         await ctx.send(embed=embed)
   
   @commands.command(pass_context=True)
-  async def user(self,ctx, user: discord.Member):
+  async def user(self, ctx, user: discord.Member):
+      user = user or ctx.message.author
       embed = discord.Embed(title="{}'s info".format(user.name), description="Here's what I could find:", color=0x00ff00)
       embed.add_field(name="Name", value=user.name, inline=True)
       embed.add_field(name="ID", value=user.id, inline=True)
