@@ -124,11 +124,14 @@ async def on_member_join(member):
 		await channel.send(embed=embed)
 		role = discord.utils.get(member.guild.roles, name="Alchemex Members")
 		await member.add_roles(role)
-	except Forbidden:
-		channel = discord.utils.get(member.guild.channels, name="bot-hell")
-	     	await channel.send(embed=embed)
-	        role = discord.utils.get(member.guild.roles, name="Alchemex Members")
-	        await member.add_roles(role)
+	except:
+		try:
+			channel = discord.utils.get(member.guild.channels, name="bot-hell")
+			await channel.send(embed=embed)
+			role = discord.utils.get(member.guild.roles, name="Alchemex Members")
+			await member.add_roles(role)
+		except: 
+			pass
 			
 
 @bot.listen()
