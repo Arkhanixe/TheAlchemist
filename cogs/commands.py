@@ -136,7 +136,7 @@ class User:
   
   @commands.command()
   async def github(self,ctx):
-    embed = discord.Embed(title="Github Link",description="[Project X](https://github.com/ProjectXTeam/TheAlchemist/)",color=0x00FF00)
+    embed = discord.Embed(title="Github Link",description="[Project X](https://github.com/ProjectXTeam/Alchemex/)",color=0x00FF00)
     await ctx.send(embed=embed)
     
   @commands.command()
