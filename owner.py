@@ -4,9 +4,7 @@ import sqlite3
 
 from discord.ext import commands
 
-class Owner:
-	
-	extensions = {
+extensions = {
 	"cogs.commands",
 	#False "cogs.admin",
 	"cogs.REPL",
@@ -14,9 +12,10 @@ class Owner:
 	#Broken "cogs.Eco",
 	"cogs.emoji",
 	"owner"
+}  
 
-	}  
-	
+class Owner:
+		
 	def __init__(self,bot):
 		self.bot = bot
 
