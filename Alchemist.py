@@ -24,10 +24,6 @@ extensions = {
 conn = sqlite3.connect("database.db")
 c = conn.cursor()
 
-async def owner_check(ctx):
-	owners = [293992072887795712,200686748458549248]
-	return ctx.author.id in owners
-
 def get_prefix(bot,ctx):
 	if not ctx.guild:
 		return "a!"
@@ -40,21 +36,47 @@ def get_prefix(bot,ctx):
 		else:
 			return xprefix[0]
 
+async def owner_check(ctx):
+	owners = [293992072887795712,200686748458549248]
+	return ctx.author.id in owners
+
 bot = commands.Bot(command_prefix=(get_prefix))
 bot.launch_time = datetime.utcnow()
 bot.remove_command("help")
 
-#allows you to update cogs without resetting bot
-@bot.command(hidden=True, aliases=['resetcogs', 'restartcogs','reloadall'])
-@commands.check(owner_check)
-async def reloadcogs(ctx):
-    async with ctx.typing():
-        await ctx.send(":gear: Reloading all cogs!", delete_after = 10)
-        for extension in extensions:
-            bot.unload_extension(extension)
-            bot.load_extension(extension)
-            await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
-    await ctx.send(":gear: Successfully Reloaded all cogs!")
+class Owner:
+	@commands.command(hidden=True, aliases=['load'])
+	@commands.check(owner_check)
+	async def loadcog(ctx,extension):
+		asyc with ctx.typing():
+			try:
+				bot.load_extension(extension)
+				await ctx.send(f":gear: Loaded {extension} :gear:",delete_after = 20)
+			except:
+				await ctx.send(f"Sorry {ctx.author.mention}, you can't run this command because you are not an Alchemex Creator",delete_after = 20)
+
+	@commands.command(hidden=True, aliases=['unload'])
+	@commands.check(owner_check)
+	async def unloadcog(ctx,extension):
+		asyc with ctx.typing():
+			try:
+				bot.unload_extension(extension)
+				await ctx.send(f":gear: Unloaded {extension} :gear:",delete_after= 20)
+			except:
+				await ctx.send(f"Sorry {ctx.author.mention}, you can't run this command because you are not an Alchemex Creator",delete_after = 20)
+
+
+	#allows you to update cogs without resetting bot
+	@commands.command(hidden=True, aliases=['resetcogs', 'restartcogs', 'reloadall','reload'])
+	@commands.check(owner_check)
+	async def reloadcogs(ctx):
+	    async with ctx.typing():
+		await ctx.send(":gear: Reloading all cogs!", delete_after = 10)
+		for extension in extensions:
+		    bot.unload_extension(extension)
+		    bot.load_extension(extension)
+		    await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
+	    await ctx.send(":gear: Successfully Reloaded all cogs!",delete_after = 30)
 
 
 @bot.listen()
