@@ -6,6 +6,17 @@ from discord.ext import commands
 
 class Owner:
 	
+	extensions = {
+	"cogs.commands",
+	#False "cogs.admin",
+	"cogs.REPL",
+	"cogs.help",
+	#Broken "cogs.Eco",
+	"cogs.emoji",
+	"owner"
+
+	}  
+	
 	def __init__(self,bot):
 		self.bot = bot
 
