@@ -17,7 +17,7 @@ extensions = {
 "cogs.help",
 #Broken "cogs.Eco",
 "cogs.emoji",
-"cogs.owner"
+"owner"
 
 }   # add more here later
 
