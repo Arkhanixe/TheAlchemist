@@ -56,7 +56,7 @@ class User:
         embed.add_field(name='Server Channel :', value=f'''  {len(guild.channels)}''', inline=False)
         await ctx.send(embed=embed)
   
-  @commands.command(pass_context=True,brief="Lists User Info | Usage: a!user <user> | No Permission Limit)
+  @commands.command(pass_context=True,brief="Lists User Info | Usage: a!user <user> | No Permission Limit")
   async def user(self, ctx, user: discord.Member):
       user = user or ctx.message.author
       embed = discord.Embed(title="{}'s info".format(user.name), description="Here's what I could find:", color=0x00ff00)
