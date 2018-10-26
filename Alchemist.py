@@ -45,9 +45,13 @@ bot.launch_time = datetime.utcnow()
 bot.remove_command("help")
 
 class Owner:
+	
+	def __init__(self,bot):
+		self.bot = bot
+
 	@commands.command(hidden=True, aliases=['load'])
 	@commands.check(owner_check)
-	async def loadcog(ctx,extension):
+	async def loadcog(self,ctx,extension):
 		async with ctx.typing():
 			try:
 				bot.load_extension(extension)
@@ -57,7 +61,7 @@ class Owner:
 
 	@commands.command(hidden=True, aliases=['unload'])
 	@commands.check(owner_check)
-	async def unloadcog(ctx,extension):
+	async def unloadcog(self,ctx,extension):
 		async with ctx.typing():
 			try:
 				bot.unload_extension(extension)
@@ -69,7 +73,7 @@ class Owner:
 	#allows you to update cogs without resetting bot
 	@commands.command(hidden=True, aliases=['resetcogs', 'restartcogs', 'reloadall','reload'])
 	@commands.check(owner_check)
-	async def reloadcogs(ctx):
+	async def reloadcogs(self,ctx):
 		async with ctx.typing():
 			await ctx.send(":gear: Reloading all cogs!", delete_after = 10)
 			for extension in extensions:
@@ -78,6 +82,9 @@ class Owner:
 				await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
 		await ctx.send(":gear: Successfully Reloaded all cogs!",delete_after = 30)
 
+
+def setup(bot):
+    bot.add_cog(Owner(bot))
 
 @bot.listen()
 async def on_message(message):
@@ -188,7 +195,6 @@ async def on_guild_join(guild):
 	embed = discord.Embed(Title="Joined Guild",description=f"Thank you for inviting me! My name is Alchemex. My prefix is <a!>. My help server is a!server. Have a nice day! \nAlchemex Creators")
 	channel = discord.utils.get(guild.channels, name="general")
 	await channel.send(embed=embed)
-	
 
 with open("Token.txt") as fp:
     token = fp.read().strip()
