@@ -18,8 +18,7 @@ def dynamic_data_entry():
 	date = str(datetime.datetime.fromtimestamp(unix).strftime('%Y-%m-%d %H:%M:%S'))
 	keyword = 'Python'
 	value = random.randrange(0,10)
-	c.execute("INSERT INTO bank (unix, datestamp, keyword, value) VALUES(?, ?, ?, ?)",
-			  (unix, date, keyword, value))
+	c.execute("INSERT INTO bank (unix, datestamp, keyword, value) VALUES(?, ?, ?, ?)",(unix, date, keyword, value))
 	conn.commit()
 
 def read_from_db():

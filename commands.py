@@ -44,7 +44,8 @@ class User:
       embed.add_field(name="Highest role", value=user.top_role)
       embed.set_thumbnail(url=user.avatar_url)
       await ctx.send(embed=embed)
- 
+
+
   @commands.command(pass_context=True)
   async def avatar(self,ctx, user : discord.Member = None):
       user = user or ctx.message.author
@@ -54,7 +55,7 @@ class User:
 
   @commands.command()
   async def roles(self,ctx):
-    await ctx.send(guild.roles)
+    await ctx.send(ctx.guild.roles)
 
 class Moderator:
 

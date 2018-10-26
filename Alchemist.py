@@ -4,7 +4,7 @@ from discord.ext import commands
 import random
 import datetime
 from datetime import datetime
-from some_paginator import Paginator
+#from some_paginator import Paginator
 import time
 import os
 
@@ -85,8 +85,8 @@ async def on_ready():
 	users = 0
 	try:
 		for x in bot.guilds:
-		 b = x.member_count
-		 users += b
+			b = x.member_count
+			users += b
 	except:
 		pass
 
@@ -109,8 +109,8 @@ async def help(ctx):
 @bot.listen()
 async def on_member_join(member):
     embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0x00FF00)	
-    embed.add_field(name=f"Creation Date",value=f"{member.created_at.strftime(%B %d, %Y)}",inline=True)
-    embed.add_field(name=f"Join Date", value=f"{member.joined_at.strftime(%B %d, %Y)}",inline=True)
+    embed.add_field(name=f"Creation Date",value=f"{member.created_at.strftime('%B %d, %Y')}",inline=True)
+    embed.add_field(name=f"Join Date", value=f"{member.joined_at.strftime('%B %d, %Y')}",inline=True)
     embed.set_author(name="Member Joined",icon_url=member.avatar_url)
     try:
         channel = discord.utils.get(member.guild.channels, name="general")
@@ -132,13 +132,13 @@ async def on_member_join(member):
                 await member.add_roles(role)
             except: 
                 pass
-			
+
 
 @bot.listen()
 async def on_member_remove(member):
     embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0xFF0000)	
-    embed.add_field(name=f"Creation Date",value=f"{member.created_at.strftime(%B %d, %Y %I:%M %p)}",inline=True)
-    embed.add_field(name=f"Join Date", value=f"{member.joined_at.strftime(%B %d, %Y %I:%M %p)}",inline=True)
+    embed.add_field(name=f"Creation Date",value=f"{member.created_at.strftime('%B %d, %Y %I:%M %p')}",inline=True)
+    embed.add_field(name=f"Join Date", value=f"{member.joined_at.strftime('%B %d, %Y %I:%M %p')}",inline=True)
     embed.set_author(name="Member left",icon_url=member.avatar_url)
     try:
         channel = discord.utils.get(member.guild.channels, name="general")
