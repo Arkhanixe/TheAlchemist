@@ -40,6 +40,17 @@ bot = commands.Bot(command_prefix=(get_prefix))
 bot.launch_time = datetime.utcnow()
 bot.remove_command("help")
 
+#allows you to update cogs without resetting bot
+@bot.command(hidden=True, aliases=['resetcogs', 'restartcogs'])
+@commands.has_permissions(administrator = True)
+async def reloadcogs(ctx):
+    async with ctx.typing():
+        await ctx.send(":gear: Reloading all cogs!", delete_after = 10)
+        for extension in extensions:
+            bot.unload_extension(extension)
+            bot.load_extension(extension)
+            await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
+    await ctx.send(":gear: Successfully Reloaded all cogs!")
 
 
 @bot.listen()
