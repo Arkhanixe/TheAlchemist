@@ -16,9 +16,7 @@ extensions = {
 "cogs.REPL",
 "cogs.help",
 #Broken "cogs.Eco",
-"cogs.emoji",
-"cogs.owner"
-
+"cogs.emoji"
 }   # add more here later
 
 
@@ -84,6 +82,22 @@ class Owner:
 				await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
 		await ctx.send(":gear: Successfully Reloaded all cogs!",delete_after = 30)
 
+async def owner_check(ctx):
+	owners = [293992072887795712,200686748458549248]
+	return ctx.author.id in owners
+
+#allows you to update cogs without resetting bot
+@bot.command(aliases=['resetcogs', 'restartcogs', 'reloadall','reloadcogs'],brief="Reloads all the cogs | Usage: a!reload | Only Only")
+@commands.check(owner_check)
+async def reload(ctx):
+	async with ctx.typing():
+		await ctx.send(":gear: Reloading all cogs!", delete_after = 10)
+		for extension in extensions:
+			bot.unload_extension(extension)
+			bot.load_extension(extension)
+			await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
+	await ctx.send(":gear: Successfully Reloaded all cogs!",delete_after = 30)
+
 @bot.listen()
 async def on_message(message):
 	"""if message.guild.me in message.mentions:
@@ -103,10 +117,6 @@ async def on_message(message):
 		xprefix = c.execute("SELECT prefix FROM my_prefix WHERE guild_id = ?",(message.guild.id,)).fetchall()
 		await message.channel.send(xprefix[0])
 	
-	if message.content.startswith("a!"):
-		with open("command_use.txt","a+") as f:
-			f.write(f"{message.author.display_name} | {datetime.strftime('%B %d, %Y at %I:%M:%S')}\n{message.content}\n\n")
-
 # If we fail to load an extension, we just leave it out.
 for extension in extensions:
 	try:
