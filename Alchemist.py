@@ -46,8 +46,8 @@ bot.remove_command("help")
 
 class Owner:
 	@commands.command(hidden=True, aliases=['load'])
-	@commands.check(owner_check)
-	async def loadcog(ctx,extension):
+	@commands.is_owner()
+	async def loadcog(self, ctx,extension):
 		async with ctx.typing():
 			try:
 				bot.load_extension(extension)
@@ -56,8 +56,8 @@ class Owner:
 				await ctx.send(f"Sorry {ctx.author.mention}, you can't run this command because you are not an Alchemex Creator",delete_after = 20)
 
 	@commands.command(hidden=True, aliases=['unload'])
-	@commands.check(owner_check)
-	async def unloadcog(ctx,extension):
+	@commands.is_owner()
+	async def unloadcog(self, ctx,extension):
 		async with ctx.typing():
 			try:
 				bot.unload_extension(extension)
@@ -68,14 +68,14 @@ class Owner:
 
 	#allows you to update cogs without resetting bot
 	@commands.command(hidden=True, aliases=['resetcogs', 'restartcogs', 'reloadall','reload'])
-	@commands.check(owner_check)
-	async def reloadcogs(ctx):
+	@commands.is_owner()
+	async def reloadcogs(self, ctx):
 		async with ctx.typing():
 			await ctx.send(":gear: Reloading all cogs!", delete_after = 10)
 			for extension in extensions:
 				bot.unload_extension(extension)
-		    		bot.load_extension(extension)
-		    		await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
+				bot.load_extension(extension)
+				await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
 		await ctx.send(":gear: Successfully Reloaded all cogs!",delete_after = 30)
 
 
