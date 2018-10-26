@@ -48,7 +48,7 @@ class Owner:
 	@commands.command(hidden=True, aliases=['load'])
 	@commands.check(owner_check)
 	async def loadcog(ctx,extension):
-		asyc with ctx.typing():
+		async with ctx.typing():
 			try:
 				bot.load_extension(extension)
 				await ctx.send(f":gear: Loaded {extension} :gear:",delete_after = 20)
@@ -58,7 +58,7 @@ class Owner:
 	@commands.command(hidden=True, aliases=['unload'])
 	@commands.check(owner_check)
 	async def unloadcog(ctx,extension):
-		asyc with ctx.typing():
+		async with ctx.typing():
 			try:
 				bot.unload_extension(extension)
 				await ctx.send(f":gear: Unloaded {extension} :gear:",delete_after= 20)
