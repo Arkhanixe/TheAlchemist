@@ -15,11 +15,10 @@ extensions = {
 }  
 
 class Owner:
-		
 	def __init__(self,bot):
-		self.bot = bot
+	  self.bot = bot
 
-	def owner_check(ctx):
+	async def owner_check(ctx):
 		owners = [293992072887795712,200686748458549248]
 		return ctx.author.id in owners
 
