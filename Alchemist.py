@@ -16,7 +16,8 @@ extensions = {
 "cogs.REPL",
 "cogs.help",
 #Broken "cogs.Eco",
-"cogs.emoji"
+"cogs.emoji",
+"cogs.owner"
 
 }   # add more here later
 
@@ -106,7 +107,6 @@ async def on_message(message):
 		with open("command_use.txt","a+") as f:
 			f.write(f"{message.author.display_name} | {datetime.strftime('%B %d, %Y at %I:%M:%S')}\n{message.content}\n\n")
 
-
 # If we fail to load an extension, we just leave it out.
 for extension in extensions:
 	try:
@@ -195,9 +195,6 @@ async def on_guild_join(guild):
 
 with open("Token.txt") as fp:
     token = fp.read().strip()
-
-def setup(bot):
-    bot.add_cog(Owner(bot))
 
 bot.run(token)
 
