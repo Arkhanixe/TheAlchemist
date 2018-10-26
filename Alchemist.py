@@ -8,6 +8,8 @@ from datetime import datetime
 import time
 import os
 
+now = datetime.datetime.now()
+
 # Set up logging
 
 extensions = {
@@ -159,43 +161,33 @@ async def help(ctx):
 """
 @bot.listen()
 async def on_member_join(member):
-    embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0x00FF00)	
-    embed.add_field(name=f"Creation Date",value=f"{member.created_at.strftime('%B %d, %Y')}",inline=True)
-    embed.add_field(name=f"Join Date", value=f"{member.joined_at.strftime('%B %d, %Y')}",inline=True)
+    embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0x009933)
+    embed.add_field(name=f"Creation Date",value=f" {member.created_at.strftime('%B %d, %Y')}",inline=True)
+    embed.add_field(name=f"Join Date", value=f" {member.joined_at.strftime('%B %d, %Y')}",inline=True)
     embed.set_author(name="Member Joined",icon_url=member.avatar_url)
     try:
         channel = discord.utils.get(member.guild.channels, name="general")
         await channel.send(embed=embed)
         role = discord.utils.get(member.guild.roles, name="Alchemex Members")
         await member.add_roles(role)
+    except:
+        pass
 
-    except discord.Forbidden:
-        try:
-            channel = discord.utils.get(member.guild.channels, name="bot-testing")
-            await channel.send(embed=embed)
-            role = discord.utils.get(member.guild.roles, name="Alchemex Members")
-            await member.add_roles(role)
-        except:
-            try:
-                channel = discord.utils.get(member.guild.channels, name="bot-hell")
-                await channel.send(embed=embed)
-                role = discord.utils.get(member.guild.roles, name="Alchemex Members")
-                await member.add_roles(role)
-            except: 
-                pass
 
 
 @bot.listen()
 async def on_member_remove(member):
-    embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0xFF0000)	
-    embed.add_field(name=f"Creation Date",value=f"{member.created_at.strftime('%B %d, %Y %I:%M %p')}",inline=True)
-    embed.add_field(name=f"Join Date", value=f"{member.joined_at.strftime('%B %d, %Y %I:%M %p')}",inline=True)
-    embed.set_author(name="Member left",icon_url=member.avatar_url)
+    embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0xff0000)
+    embed.add_field(name=f"Join Date", value=f" {member.joined_at.strftime('%B %d, %Y')}",inline=True)
+    embed.add_field(name=f"Leave Date", value=f" {now.strftime('%B %d, %Y')}",inline=True)
+    embed.set_author(name = "Member Left", url=member.avatar_url)
     try:
         channel = discord.utils.get(member.guild.channels, name="general")
         await channel.send(embed=embed)
     except:
-        pass
+        channel = discord.utils.get(member.guild.channels, name="general") 
+        await channel.send(embed=embed)
+
 
 @bot.listen()
 async def on_guild_join(guild):
