@@ -36,10 +36,6 @@ def get_prefix(bot,ctx):
 		else:
 			return xprefix[0]
 
-async def owner_check(ctx):
-	owners = [293992072887795712,200686748458549248]
-	return ctx.author.id in owners
-
 bot = commands.Bot(command_prefix=(get_prefix))
 bot.launch_time = datetime.utcnow()
 bot.remove_command("help")
@@ -48,6 +44,10 @@ class Owner:
 	
 	def __init__(self,bot):
 		self.bot = bot
+
+	def owner_check(ctx):
+		owners = [293992072887795712,200686748458549248]
+		return ctx.author.id in owners
 
 	@commands.command(hidden=True, aliases=['load'])
 	@commands.check(owner_check)
@@ -81,10 +81,6 @@ class Owner:
 				bot.load_extension(extension)
 				await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
 		await ctx.send(":gear: Successfully Reloaded all cogs!",delete_after = 30)
-
-
-def setup(bot):
-    bot.add_cog(Owner(bot))
 
 @bot.listen()
 async def on_message(message):
@@ -198,6 +194,9 @@ async def on_guild_join(guild):
 
 with open("Token.txt") as fp:
     token = fp.read().strip()
+
+def setup(bot):
+    bot.add_cog(Owner(bot))
 
 bot.run(token)
 
