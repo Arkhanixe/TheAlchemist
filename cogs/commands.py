@@ -158,7 +158,7 @@ class Moderator:
     await ctx.send(embed = discord.Embed(title="Unban",description="{0.name} got unbanned from the server".format(user)))
 
   @commands.has_permissions(kick_members=True)
-  @commands.command(brief="Kicks Member | Usage: a!kick <user> | Kick Members Needed)
+  @commands.command(brief="Kicks Member | Usage: a!kick <user> | Kick Members Needed")
   async def kick(self,ctx, member: discord.Member,*reason): 
     await ctx.guild.kick(member)
     if reason == None:
@@ -176,7 +176,7 @@ class Moderator:
       await ctx.send(embed = discord.Embed(title="User Banned",description=f"{member.name} got kicked from the server for {reason}",color=0xFF0000))
 
   @commands.has_permissions(manage_messages=True)
-  @commands.command(brief="Deletes X amount of messages | Usage: a!purge <# of messages> | Manage Messages Needed)
+  @commands.command(brief="Deletes X amount of messages | Usage: a!purge <# of messages> | Manage Messages Needed")
   async def purge(self,ctx, number: int = None):
 
     
