@@ -74,8 +74,8 @@ class Owner:
 			await ctx.send(":gear: Reloading all cogs!", delete_after = 10)
 			for extension in extensions:
 				bot.unload_extension(extension)
-		    		bot.load_extension(extension)
-		    		await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
+				bot.load_extension(extension)
+				await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
 		await ctx.send(":gear: Successfully Reloaded all cogs!",delete_after = 30)
 
 
