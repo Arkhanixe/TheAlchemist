@@ -44,27 +44,6 @@ async def owner_check(ctx):
 	owners = [293992072887795712,200686748458549248]
 	return ctx.author.id in owners
 
-@bot.command(aliases=['loadcog'],brief="Loads a cog | Usage: a!load <cog> | Owner Only")
-@commands.check(owner_check)
-async def load(ctx,extension):
-	async with ctx.typing():
-		try:
-			bot.load_extension(extension)
-			await ctx.send(f":gear: Loaded {extension} :gear:",delete_after = 20)
-		except:
-			await ctx.send(f"Sorry {ctx.author.mention}, you can't run this command because you are not an Alchemex Creator",delete_after = 20)
-
-@bot.command(aliases=['unloadcog'],brief="Unloads a cog | Usage: a!unload <cog> | Owner Only")
-@commands.check(owner_check)
-async def unload(ctx,extension):
-	async with ctx.typing():
-		try:
-			bot.unload_extension(extension)
-			await ctx.send(f":gear: Unloaded {extension} :gear:",delete_after= 20)
-		except:
-			await ctx.send(f"Sorry {ctx.author.mention}, you can't run this command because you are not an Alchemex Creator",delete_after = 20)
-
-
 #allows you to update cogs without resetting bot
 @bot.command(aliases=['resetcogs', 'restartcogs', 'reloadall','reloadcogs'],brief="Reloads all the cogs | Usage: a!reload | Only Only")
 @commands.check(owner_check)
