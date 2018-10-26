@@ -113,30 +113,6 @@ class User:
     em = discord.Embed(title="Suggestion sent",description=f"Message was sent")
     await ctx.send(embed=em)
 
-"""
-
-  @commands.command()
-  async def invite(self,ctx,botid,prefix):
-    embed = discord.Embed(title="Bot Invite")
-    c.execute("CREATE TABLE IF NOT EXISTS bots(Bot_ID BIGINT, Prefix VARCHAR,Author_ID BIGINT)")
-    conn.commit()
-    #Author
-    embed.add_field(name=f"Author",value=f"{ctx.author.id} | {ctx.author}")
-    embed.add_field(name=f"Invite",value=f"https://discordapp.com/api/oauth2/authorize?client_id={botid}&permissions=-1&scope=bot")
-    embed.add_field(name=f"Prefix",value=f"{prefix}")
-    embed.add_field(name=f"Guild",value=f"{ctx.guild}")
-    y = c.execute("SELECT * FROM bots WHERE Bot_ID=?",(botid))
-    if y != [] or None:
-      pass
-    else:
-      c.execute("INSERT INTO bots VALUES(?,?,?)",(botid,prefix,ctx.author.id))
-      conn.commit()
-    em = discord.Embed(description="Thank you for submitting your bot! You should get a dm within the next 24 hours if your bot has been accepted! Have a good day!")
-    await ctx.send(em)
-    x = ctx.bot.get_channel(494282311400030209)
-    await x.send(embed=embed)
- """
-
   @commands.command(brief="Lists the github link of the bot | Usage: a!github | No Permission Limit")
   async def github(self,ctx):
     embed = discord.Embed(title="Github Link",description="[Project X](https://github.com/ProjectXTeam/Alchemex/)",color=0x00FF00)
