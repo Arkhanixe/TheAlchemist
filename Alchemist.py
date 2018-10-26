@@ -44,9 +44,9 @@ async def owner_check(ctx):
 	owners = [293992072887795712,200686748458549248]
 	return ctx.author.id in owners
 
-@commands.command(aliases=['loadcog'],brief="Loads a cog | Usage: a!load <cog> | Owner Only")
+@bot.command(aliases=['loadcog'],brief="Loads a cog | Usage: a!load <cog> | Owner Only")
 @commands.check(owner_check)
-async def load(self,ctx,extension):
+async def load(ctx,extension):
 	async with ctx.typing():
 		try:
 			bot.load_extension(extension)
@@ -54,9 +54,9 @@ async def load(self,ctx,extension):
 		except:
 			await ctx.send(f"Sorry {ctx.author.mention}, you can't run this command because you are not an Alchemex Creator",delete_after = 20)
 
-@commands.command(aliases=['unloadcog'],brief="Unloads a cog | Usage: a!unload <cog> | Owner Only")
+@bot.command(aliases=['unloadcog'],brief="Unloads a cog | Usage: a!unload <cog> | Owner Only")
 @commands.check(owner_check)
-async def unload(self,ctx,extension):
+async def unload(ctx,extension):
 	async with ctx.typing():
 		try:
 			bot.unload_extension(extension)
@@ -66,9 +66,9 @@ async def unload(self,ctx,extension):
 
 
 #allows you to update cogs without resetting bot
-@commands.command(aliases=['resetcogs', 'restartcogs', 'reloadall','reload'],brief="Reloads all the cogs | Usage: a!reload | Only Only")
+@bot.command(aliases=['resetcogs', 'restartcogs', 'reloadall','reload'],brief="Reloads all the cogs | Usage: a!reload | Only Only")
 @commands.check(owner_check)
-async def reload(self,ctx):
+async def reload(ctx):
 	async with ctx.typing():
 		await ctx.send(":gear: Reloading all cogs!", delete_after = 10)
 		for extension in extensions:
