@@ -24,6 +24,10 @@ extensions = {
 conn = sqlite3.connect("database.db")
 c = conn.cursor()
 
+async def owner_check(ctx):
+	owners = [293992072887795712,200686748458549248]
+	return ctx.author.id in owners
+
 def get_prefix(bot,ctx):
 	if not ctx.guild:
 		return "a!"
@@ -41,8 +45,8 @@ bot.launch_time = datetime.utcnow()
 bot.remove_command("help")
 
 #allows you to update cogs without resetting bot
-@bot.command(hidden=True, aliases=['resetcogs', 'restartcogs'])
-@commands.has_permissions(administrator = True)
+@bot.command(hidden=True, aliases=['resetcogs', 'restartcogs','reloadall'])
+@commands.check(owner_check)
 async def reloadcogs(ctx):
     async with ctx.typing():
         await ctx.send(":gear: Reloading all cogs!", delete_after = 10)
