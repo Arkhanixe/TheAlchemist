@@ -66,7 +66,7 @@ async def unload(ctx,extension):
 
 
 #allows you to update cogs without resetting bot
-@bot.command(aliases=['resetcogs', 'restartcogs', 'reloadall','reload'],brief="Reloads all the cogs | Usage: a!reload | Only Only")
+@bot.command(aliases=['resetcogs', 'restartcogs', 'reloadall','reloadcogs'],brief="Reloads all the cogs | Usage: a!reload | Only Only")
 @commands.check(owner_check)
 async def reload(ctx):
 	async with ctx.typing():
