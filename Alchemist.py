@@ -16,7 +16,8 @@ extensions = {
 "cogs.REPL",
 "cogs.help",
 #Broken "cogs.Eco",
-"cogs.emoji"
+"cogs.emoji",
+"cogs.owner"
 
 }   # add more here later
 
@@ -40,48 +41,6 @@ bot = commands.Bot(command_prefix=(get_prefix))
 bot.launch_time = datetime.utcnow()
 bot.remove_command("help")
 
-class Owner:
-	
-	def __init__(self,bot):
-		self.bot = bot
-
-	def owner_check(ctx):
-		owners = [293992072887795712,200686748458549248]
-		return ctx.author.id in owners
-
-	@commands.command(hidden=True, aliases=['load'])
-	@commands.is_owner()
-	async def loadcog(self, ctx,extension):
-		async with ctx.typing():
-			try:
-				bot.load_extension(extension)
-				await ctx.send(f":gear: Loaded {extension} :gear:",delete_after = 20)
-			except:
-				await ctx.send(f"Sorry {ctx.author.mention}, you can't run this command because you are not an Alchemex Creator",delete_after = 20)
-
-	@commands.command(hidden=True, aliases=['unload'])
-	@commands.is_owner()
-	async def unloadcog(self, ctx,extension):
-
-		async with ctx.typing():
-			try:
-				bot.unload_extension(extension)
-				await ctx.send(f":gear: Unloaded {extension} :gear:",delete_after= 20)
-			except:
-				await ctx.send(f"Sorry {ctx.author.mention}, you can't run this command because you are not an Alchemex Creator",delete_after = 20)
-
-
-	#allows you to update cogs without resetting bot
-	@commands.command(hidden=True, aliases=['resetcogs', 'restartcogs', 'reloadall','reload'])
-	@commands.is_owner()
-	async def reloadcogs(self, ctx):
-		async with ctx.typing():
-			await ctx.send(":gear: Reloading all cogs!", delete_after = 10)
-			for extension in extensions:
-				bot.unload_extension(extension)
-				bot.load_extension(extension)
-				await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
-		await ctx.send(":gear: Successfully Reloaded all cogs!",delete_after = 30)
 
 @bot.listen()
 async def on_message(message):
@@ -105,7 +64,6 @@ async def on_message(message):
 	if message.content.startswith("a!"):
 		with open("command_use.txt","a+") as f:
 			f.write(f"{message.author.display_name} | {datetime.strftime('%B %d, %Y at %I:%M:%S')}\n{message.content}\n\n")
-
 
 # If we fail to load an extension, we just leave it out.
 for extension in extensions:
@@ -195,9 +153,6 @@ async def on_guild_join(guild):
 
 with open("Token.txt") as fp:
     token = fp.read().strip()
-
-def setup(bot):
-    bot.add_cog(Owner(bot))
 
 bot.run(token)
 
