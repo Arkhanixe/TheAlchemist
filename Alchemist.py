@@ -8,7 +8,7 @@ from datetime import datetime
 import time
 import os
 
-now = datetime.datetime.now()
+now = datetime.now()
 
 # Set up logging
 
