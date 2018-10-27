@@ -26,7 +26,7 @@ class Moderator:
     
   @commands.has_permissions(kick_members=True)
   @bot.command()
-  async def kick(ctx, member: discord.Member):
+  async def kick(self,ctx, member: discord.Member):
     await ctx.guild.kick(
         member
         )
@@ -42,7 +42,7 @@ class Moderator:
 
   @commands.has_permissions(ban_members=True)
   @bot.command()
-  async def ban(ctx, user:int):
+  async def ban(self,ctx, user:int):
     userid = discord.Object(user)
     await ctx.guild.ban(discord.Object(
         int(
@@ -74,13 +74,8 @@ class Moderator:
       limit = number + 1
       )
 
-    await ctx.send(
-      'Deleted {} message(s)'.format(
-        len(
-          deleted
-          )
-        ), delete_after=15
-      )
+    await ctx.send(f'Deleted {len(deleted)} message(s)', delete_after=15)
+
 
 def setup(bot):
     bot.add_cog(Moderator(bot))

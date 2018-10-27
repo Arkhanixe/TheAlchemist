@@ -37,7 +37,6 @@ animated_re = re.compile(r"<a:([^:]+):(\d+)>")
 
 
 class GrandTheftEmojiCog:
- 
     @staticmethod
     def transform_mute(emojis):
         return [str(emoji) + " " for emoji in emojis]

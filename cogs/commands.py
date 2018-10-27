@@ -60,7 +60,7 @@ class User:
   @commands.command(pass_context=True,brief="Lists User Info | Usage: a!user <user> | No Permission Limit")
   async def user(self, ctx, user: discord.Member):
       user = user or ctx.message.author
-      embed = discord.Embed(title="{}'s info".format(user.name), description="Here's what I could find:", color=0x00ff00)
+      embed = discord.Embed(title=f"{user.name}'s info", description="Here's what I could find:", color=0x00ff00)
       embed.add_field(name="Name", value=user.name, inline=True)
       embed.add_field(name="ID", value=user.id, inline=True)
       embed.add_field(name="Status", value=user.status, inline=True)
@@ -69,7 +69,7 @@ class User:
       embed.add_field(name="Highest role", value=user.top_role)
       embed.set_thumbnail(url=user.avatar_url)
       await ctx.send(embed=embed)
- 
+
   @commands.command(pass_context=True,brief="Lists  User Avatar | Usage: a!avatar <user> | No Permission Limit")
   async def avatar(self,ctx, user : discord.Member = None):
       user = user or ctx.message.author
@@ -185,13 +185,8 @@ class Moderator:
       limit = number + 1
       )
 
-    await ctx.send(
-      'Deleted {} message(s)'.format(
-        len(
-          deleted
-          )
-        ), delete_after=15
-      )
+    await ctx.send(f'Deleted {len(deleted)} message(s)', delete_after=15)
+
 
   @commands.has_permissions(ban_members=True)
   @commands.command(brief="Sets the servers prefix, Do <Alchemex Prefix> to get current prefix | Usage: a!setprefix <prefix> | Ban Members Needed")

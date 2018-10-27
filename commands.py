@@ -13,7 +13,7 @@ class User:
   def __init__(self,bot):
     self.bot = bot
 
-  @commands.check(owner)
+  @commands.is_owner()
   @commands.command()
   async def position(self,ctx,xrole: discord.Role):
     await ctx.author.send(xrole.position)
@@ -35,7 +35,7 @@ class User:
   
   @commands.command(pass_context=True)
   async def user(self,ctx, user: discord.Member):
-      embed = discord.Embed(title="{}'s info".format(user.name), description="Here's what I could find:", color=0x00ff00)
+      embed = discord.Embed(title=f"{user.name}'s info", description="Here's what I could find:", color=0x00ff00)
       embed.add_field(name="Name", value=user.name, inline=True)
       embed.add_field(name="ID", value=user.id, inline=True)
       embed.add_field(name="Status", value=user.status, inline=True)
@@ -93,13 +93,7 @@ class Moderator:
       limit = number + 1
       )
 
-    await ctx.send(
-      'Deleted {} message(s)'.format(
-        len(
-          deleted
-          )
-        ), delete_after=15
-      )
+    await ctx.send(f'Deleted {len(deleted)} message(s)', delete_after=15)
 
 def setup(bot):
     bot.add_cog(User(bot))

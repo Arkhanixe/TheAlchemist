@@ -151,14 +151,6 @@ c.execute("CREATE TABLE IF NOT EXISTS bank(User_ID BIGINT NOT NULL, Balance floa
 conn.commit()
 
 
-"""
-@bot.group(invoke_without_command=True)
-async def help(ctx):
-	for command in bot.commands:
-		em = discord.Embed(title="Alchemist Help Menu",description=command_S)
-		await ctx.send(embed = em)
-		
-"""
 @bot.listen()
 async def on_member_join(member):
     embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0x009933)
@@ -201,4 +193,4 @@ with open("Token.txt") as fp:
 bot.run(token)
 
 #Omega Cafe
-#bot.run("NDM0MTMyOTA1NDgwOTQ1Njc0.DhOAow.Zj5Kzkv_n-NjjPq8bQQWxMh2Kr0")
+#bot.run("NDM0MTMyOTA1NDgwOTQ1Njc0.DhOAow.Zj5Kzkv_n-NjjPq8bQQWxMh2Kr0") #maybe remove token
