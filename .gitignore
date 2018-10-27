@@ -7,3 +7,5 @@
 __pycache__/
 **/__pycache__/
 **/__init__.py
+cogs/__pycache__/REPL.cpython-37.pyc
+cogs/__pycache__/commands.cpython-37.pyc
