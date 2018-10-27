@@ -2,8 +2,10 @@
 Alchemex is a bot created by Justin, and Crystal
 
 Some of our developers include:
-Zevfer
+[
+Zevfer,
 Infidel Eraser
+]
 
 The bot has different features to support different things. 
 
