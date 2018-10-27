@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import datetime
 
 def owner(ctx):
   if ctx.author.id == 462351034384252938:
@@ -68,10 +69,10 @@ class User:
       embed = discord.Embed(title=f'{user.name}\'s Avatar', description=f'I think I found {user.name}\'s Avatar but can\'t be too sure ;) Here you go!', colour=discord.Colour(0x0bc5df))
       embed.set_image(url=user.avatar_url)
       await ctx.send(embed=embed)
-
+'''
   @commands.command()
   async def roles(self,ctx):
     await ctx.send(guild.roles)
-
+'''
 def setup(bot):
     bot.add_cog(User(bot))
