@@ -18,8 +18,7 @@ extensions = {
 "cogs.REPL",
 "cogs.help",
 #Broken "cogs.Eco",
-"cogs.emoji",
-"cogs.musicv2"
+"cogs.emoji"
 }   # add more here later
 
 
