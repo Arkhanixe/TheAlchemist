@@ -21,4 +21,3 @@ Come on over and enjoy a world of many wonders.}
 [Server invite]
 https://discord.gg/MjxqTwf
 
-Special Thanks to Espy, who created the paginator, as well as the help command, and the REPL command
