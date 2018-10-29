@@ -14,12 +14,9 @@ now = datetime.now()
 
 extensions = {
 "cogs.commands",
-#False "cogs.admin",
 "cogs.REPL",
 "cogs.help",
-#Broken "cogs.Eco",
 "cogs.emoji"
-"cogs.music"
 }   # add more here later
 
 
@@ -41,49 +38,6 @@ def get_prefix(bot,ctx):
 bot = commands.Bot(command_prefix=(get_prefix))
 bot.launch_time = datetime.utcnow()
 bot.remove_command("help")
-
-class Owner:
-	
-	def __init__(self,bot):
-		self.bot = bot
-
-	def owner_check(self, ctx):
-		owners = [293992072887795712,200686748458549248]
-		return ctx.author.id in owners
-
-	@commands.command(hidden=True, aliases=['load'])
-	@commands.is_owner()
-	async def loadcog(self, ctx,extension):
-		async with ctx.typing():
-			try:
-				bot.load_extension(extension)
-				await ctx.send(f":gear: Loaded {extension} :gear:",delete_after = 20)
-			except:
-				await ctx.send(f"Sorry {ctx.author.mention}, you can't run this command because you are not an Alchemex Creator",delete_after = 20)
-
-	@commands.command(hidden=True, aliases=['unload'])
-	@commands.is_owner()
-	async def unloadcog(self, ctx,extension):
-
-		async with ctx.typing():
-			try:
-				bot.unload_extension(extension)
-				await ctx.send(f":gear: Unloaded {extension} :gear:",delete_after= 20)
-			except:
-				await ctx.send(f"Sorry {ctx.author.mention}, you can't run this command because you are not an Alchemex Creator",delete_after = 20)
-
-
-	#allows you to update cogs without resetting bot
-	@commands.command(hidden=True, aliases=['resetcogs', 'restartcogs', 'reloadall','reload'])
-	@commands.is_owner()
-	async def reloadcogs(self, ctx):
-		async with ctx.typing():
-			await ctx.send(":gear: Reloading all cogs!", delete_after = 10)
-			for extension in extensions:
-				bot.unload_extension(extension)
-				bot.load_extension(extension)
-				await ctx.send(f":gear: Successfully Reloaded {extension}", delete_after = 10)
-		await ctx.send(":gear: Successfully Reloaded all cogs!",delete_after = 30)
 
 async def owner_check(ctx):
 	owners = [293992072887795712,200686748458549248]
@@ -154,18 +108,31 @@ conn.commit()
 
 @bot.listen()
 async def on_member_join(member):
-    embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0x009933)
-    embed.add_field(name=f"Creation Date",value=f" {member.created_at.strftime('%B %d, %Y')}",inline=True)
-    embed.add_field(name=f"Join Date", value=f" {member.joined_at.strftime('%B %d, %Y')}",inline=True)
-    embed.set_author(name="Member Joined",icon_url=member.avatar_url)
-    try:
-        channel = discord.utils.get(member.guild.channels, name="general")
-        await channel.send(embed=embed)
-        role = discord.utils.get(member.guild.roles, name="Alchemex Members")
-        await member.add_roles(role)
-    except:
-        pass
+    if member.bot = False:
+	    embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0x009933)
+	    embed.add_field(name=f"Creation Date",value=f" {member.created_at.strftime('%B %d, %Y')}",inline=True)
+	    embed.add_field(name=f"Join Date", value=f" {member.joined_at.strftime('%B %d, %Y')}",inline=True)
+	    embed.set_author(name="Member Joined",icon_url=member.avatar_url)
+	    try:
+		channel = discord.utils.get(member.guild.channels, name="general")
+		await channel.send(embed=embed)
+		role = discord.utils.get(member.guild.roles, name="Alchemex Members")
+		await member.add_roles(role)
+	    except:
+		pass
 
+      else:
+	    embed = discord.Embed(title=f"BOT {member.name}#{member.discriminator}",color=0x009933)
+	    embed.add_field(name=f"Creation Date",value=f" {member.created_at.strftime('%B %d, %Y')}",inline=True)
+	    embed.add_field(name=f"Join Date", value=f" {member.joined_at.strftime('%B %d, %Y')}",inline=True)
+	    embed.set_author(name="Member Joined",icon_url=member.avatar_url)
+	    try:
+		channel = discord.utils.get(member.guild.channels, name="general")
+		await channel.send(embed=embed)
+		role = discord.utils.get(member.guild.roles, name="Alchemex Members")
+		await member.add_roles(role)
+	    except:
+		pass
 
 
 @bot.listen()
