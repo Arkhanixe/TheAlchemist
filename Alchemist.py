@@ -108,7 +108,7 @@ conn.commit()
 
 @bot.listen()
 async def on_member_join(member):
-    if member.bot = False:
+    if member.bot == False:
 	    embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0x009933)
 	    embed.add_field(name=f"Creation Date",value=f" {member.created_at.strftime('%B %d, %Y')}",inline=True)
 	    embed.add_field(name=f"Join Date", value=f" {member.joined_at.strftime('%B %d, %Y')}",inline=True)
