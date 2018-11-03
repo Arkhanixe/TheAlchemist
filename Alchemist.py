@@ -91,14 +91,7 @@ async def on_ready():
 	print(f"Have premium? {bot.user.premium}")
 	print(f"Preparing Game")
 	users = 0
-	try:
-		for x in bot.guilds:
-			b = x.member_count
-			users += b
-	except:
-		pass
-
-	game = discord.Game(f" Nothing | User Count: {users}")
+	game = discord.Game(f" Nothing | User Count: {len(bot.guilds)}")
 	await bot.change_presence(status=discord.Status.online,activity=game)
 	print(f"Playing {game}")
 
