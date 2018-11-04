@@ -141,7 +141,7 @@ async def on_member_remove(member):
     try:
 	channel = discord.utils.get(member.guild.channels, name="general")
 	await channel.send(embed=embed)
-     except:
+    except:
         channel = discord.utils.get(member.guild.channels, name="♡chill-chat♡")
         await channel.send(embed=embed)
 
