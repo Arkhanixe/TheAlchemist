@@ -133,16 +133,28 @@ async def on_member_join(member):
 
 @bot.listen()
 async def on_member_remove(member):
-    embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0xff0000)
-    embed.add_field(name=f"Join Date", value=f" {member.joined_at.strftime('%B %d, %Y')}",inline=True)
-    embed.add_field(name=f"Leave Date", value=f" {now.strftime('%B %d, %Y')}",inline=True)
-    embed.set_author(name = "Member Left", url=member.avatar_url)
-    try:
-        channel = discord.utils.get(member.guild.channels, name="general")
-        await channel.send(embed=embed)
-    except:
-        channel = discord.utils.get(member.guild.channels, name="join-leaves")
-        await channel.send(embed=embed)
+        if member.bot == False:
+            embed = discord.Embed(title=f"{member.name}#{member.discriminator}",color=0xff0000)
+            embed.add_field(name=f"Join Date", value=f" {member.joined_at.strftime('%B %d, %Y')}",inline=True)
+            embed.add_field(name=f"Leave Date", value=f" {now.strftime('%B %d, %Y')}",inline=True)
+            embed.set_author(name="Member Left",icon_url=member.avatar_url)
+            try:
+                channel = discord.utils.get(member.guild.channels, name="join-leave-spam")
+                await channel.send(embed=embed)
+            except:
+                channel = discord.utils.get(member.guild.channels, name="general") 
+                await channel.send(embed=embed)
+        else:
+            embed = discord.Embed(title=f"BOT {member.name}#{member.discriminator}",color=0xff0000)
+            embed.add_field(name=f"Join Date", value=f" {member.joined_at.strftime('%B %d, %Y')}",inline=True)
+            embed.add_field(name=f"Leave Date", value=f" {now.strftime('%B %d, %Y')}",inline=True)
+            embed.set_author(name="Member Joined",icon_url=member.avatar_url)
+            try:
+                channel = discord.utils.get(member.guild.channels, name="join-leave-spam")
+                await channel.send(embed=embed)
+            except:
+                channel = discord.utils.get(member.guild.channels, name="general") 
+                await channel.send(embed=embed)
 
 
 
