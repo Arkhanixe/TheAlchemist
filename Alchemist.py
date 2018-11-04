@@ -90,7 +90,6 @@ async def on_ready():
 	print(f"Email: {bot.user.email}")
 	print(f"Have premium? {bot.user.premium}")
 	print(f"Preparing Game")
-	users = 0
 	game = discord.Game(f" Nothing | User Count: {len(bot.guilds)}")
 	await bot.change_presence(status=discord.Status.online,activity=game)
 	print(f"Playing {game}")
