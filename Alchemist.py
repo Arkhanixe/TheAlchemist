@@ -112,8 +112,10 @@ async def on_member_join(member):
 			role = discord.utils.get(member.guild.roles, name="Alchemex Members")
 			await member.add_roles(role)
 		except:
-			pass
-
+			channel = discord.utils.get(member.guild.channels, name="♡chill-chat♡")
+			await channel.send(embed=embed)
+			role = discord.utils.get(member.guild.roles, name="Alchemex Members")
+			await member.add_roles(role)
 	else:
 		embed = discord.Embed(title=f"BOT {member.name}#{member.discriminator}",color=0x009933)
 		embed.add_field(name=f"Creation Date",value=f" {member.created_at.strftime('%B %d, %Y')}",inline=True)
@@ -125,7 +127,10 @@ async def on_member_join(member):
 			role = discord.utils.get(member.guild.roles, name="Alchemex Members")
 			await member.add_roles(role)
 		except:
-			pass
+			channel = discord.utils.get(member.guild.channels, name="♡chill-chat♡")
+			await channel.send(embed=embed)
+			role = discord.utils.get(member.guild.roles, name="Alchemex Members")
+			await member.add_roles(role)
 
 @bot.listen()
 async def on_member_remove(member):
@@ -137,8 +142,9 @@ async def on_member_remove(member):
         channel = discord.utils.get(member.guild.channels, name="general")
         await channel.send(embed=embed)
     except:
-        channel = discord.utils.get(member.guild.channels, name="general") 
-        await channel.send(embed=embed)
+        channel = discord.utils.get(member.guild.channels, name="♡chill-chat♡")
+	await channel.send(embed=embed)
+
 
 
 @bot.listen()
