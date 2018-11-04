@@ -169,5 +169,3 @@ with open("Token.txt") as fp:
 
 bot.run(token)
 
-#Omega Cafe
-#bot.run("NDM0MTMyOTA1NDgwOTQ1Njc0.DhOAow.Zj5Kzkv_n-NjjPq8bQQWxMh2Kr0") #maybe remove token
