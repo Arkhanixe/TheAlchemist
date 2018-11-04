@@ -112,7 +112,7 @@ async def on_member_join(member):
 			role = discord.utils.get(member.guild.roles, name="Alchemex Members")
 			await member.add_roles(role)
 		except:
-			channel = discord.utils.get(member.guild.channels, name="♡chill-chat♡")
+			channel = discord.utils.get(member.guild.channels, name="join-leaves")
 			await channel.send(embed=embed)
 			role = discord.utils.get(member.guild.roles, name="Alchemex Members")
 			await member.add_roles(role)
@@ -127,7 +127,7 @@ async def on_member_join(member):
 			role = discord.utils.get(member.guild.roles, name="Alchemex Members")
 			await member.add_roles(role)
 		except:
-			channel = discord.utils.get(member.guild.channels, name="♡chill-chat♡")
+			channel = discord.utils.get(member.guild.channels, name="join-leaves")
 			await channel.send(embed=embed)
 			role = discord.utils.get(member.guild.roles, name="Alchemex Members")
 			await member.add_roles(role)
