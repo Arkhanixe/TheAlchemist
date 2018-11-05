@@ -63,12 +63,12 @@ async def on_message(message):
 		await message.channel.send(f"You probaly want my prefix! Here you go: {y[0]}")
 	"""
 	if isinstance(message.channel, discord.DMChannel):
-			channelid = bot.get_channel(504616214237151243)
-			em_dm = discord.Embed(colour=0x0000FF)
-			em_dm.set_author(name=f"Message ID: {message.id}",icon_url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtcb5rrDHigYWUiULXW4plUlUI-4w4-wVtL8PpU8Bbg4ejnFBhgg")
-			em_dm.add_field(name="Content",value=f"{message.content}")
-			em_dm.set_footer(text=f"Sent by {message.author} | ID = {message.author.id}")
-			await channelid.send(embed=em_dm)
+		channelid = bot.get_channel(504616214237151243)
+		em_dm = discord.Embed(colour=0x0000FF)
+		em_dm.set_author(name=f"Message ID: {message.id}",icon_url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtcb5rrDHigYWUiULXW4plUlUI-4w4-wVtL8PpU8Bbg4ejnFBhgg")
+		em_dm.add_field(name="Content",value=f"{message.content}")
+		em_dm.set_footer(text=f"Sent by {message.author} | ID = {message.author.id}")
+		await channelid.send(embed=em_dm)
 
 	if message.content.startswith("Alchemex prefix"):
 		xprefix = c.execute("SELECT prefix FROM my_prefix WHERE guild_id = ?",(message.guild.id,)).fetchall()
