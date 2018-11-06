@@ -82,6 +82,11 @@ class User:
     embed = discord.Embed(title="Server Info and Invite",description="```[Welcome to Project X]\n\nIn the server, you are able to learn the basics, as well as the advanced options, to creating your own Discord Bot. Here, you can give help, but also get help. Message an admin or higher to get your own bot in the server, which would allow you to share your bot, as well as test it with other developers\n\nOf course, we have rules, but unlike other servers, they are light and as long as you don't abuse the strict ones, you are fine.\n\nCome on over and enjoy a world of many wonders.}\n\n[Server invite]\n#https://discord.gg/MjxqTwf```")
     await ctx.send(embed=embed)
 
+
+  @commands.command(brief = 'Shows owner of the server')
+  async def owner(self, ctx):
+    await ctx.send(f"{ctx.guild.owner.mention} owns this server")
+
   @commands.command(brief="Shows a dancing anime human | Usage: a!dance | No Permssion Limit")
   async def dance(self,ctx):
     embed=discord.Embed()
