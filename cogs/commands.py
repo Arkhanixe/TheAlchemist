@@ -141,6 +141,14 @@ class User:
     embed.add_field(name="Member Count",value=members)
     embed.add_field(name="Total",value=total)
     await ctx.send(embed=embed)
+    
+  @commands.command(brief = 'shows people with administrator perms on the server', aliases =['mods', 'mod', 'admin', ])
+  async def admins(self, ctx):
+    embed = discord.Embed(description = f'Admins on {ctx.guild.name}',color=0x00ff00)
+    for x in ctx.guild.members:
+      if x.guild_permissions.administrator:
+        embed.add_field(name = f'{x.display_name}', value = f"{x.name}#{x.discriminator}", inline = False)
+    await ctx.send(embed = embed)
 
 class Moderator:
 
@@ -205,14 +213,6 @@ class Moderator:
         conn.commit()
 
       await ctx.send(f"Your prefix is now {theprefix}")
-
-  @commands.command(brief = 'shows people with administrator perms on the server', aliases =['mods', 'mod', 'admin', ])
-  async def admins(self, ctx):
-    embed = discord.Embed(description = f'Admins on {ctx.guild.name}',color=0x00ff00)
-    for x in ctx.guild.members:
-      if x.guild_permissions.administrator:
-        embed.add_field(name = f'{x.display_name}', value = f"{x.name}#{x.discriminator}", inline = False)
-    await ctx.send(embed = embed)
 
 
 
