@@ -214,6 +214,15 @@ class Moderator:
 
       await ctx.send(f"Your prefix is now {theprefix}")
 
+  @commands.command(brief = 'shows people with administrator perms on the server', aliases =['mods', 'mod', 'admin', ])
+  async def admins(self, ctx):
+      embed = discord.Embed(description = f'Admins on {ctx.guild.name}',color=0x00ff00)
+      for x in ctx.guild.members:
+        if x.guild_permissions.administrator:
+          embed.add_field(name = f'{x.display_name}', value = f"{x.name}#{x.discriminator}", inline = False)
+      await ctx.send(embed = embed)
+
+
 
 
 def setup(bot):
