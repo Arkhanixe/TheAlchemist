@@ -216,27 +216,27 @@ class Moderator:
   @commands.has_permissions(ban_members=True)
   @commands.command(brief="Sets the servers prefix, Do <Alchemex Prefix> to get current prefix | Usage: a!setprefix <prefix> | Ban Members Needed")
   async def setprefix(self,ctx,theprefix):
-      x = c.execute("SELECT prefix FROM my_prefix WHERE guild_id=?",(ctx.guild.id,)).fetchall()
-      if x != [] or None:
-        c.execute("UPDATE my_prefix SET prefix = ? WHERE guild_id = ?",(theprefix,ctx.guild.id))
-        conn.commit()
-      else:
-        c.execute("INSERT INTO my_prefix VALUES(?,?)",(theprefix,ctx.guild.id))
-        conn.commit()
+    x = c.execute("SELECT prefix FROM my_prefix WHERE guild_id=?",(ctx.guild.id,)).fetchall()
+    if x != [] or None:
+      c.execute("UPDATE my_prefix SET prefix = ? WHERE guild_id = ?",(theprefix,ctx.guild.id))
+      conn.commit()
+    else:
+      c.execute("INSERT INTO my_prefix VALUES(?,?)",(theprefix,ctx.guild.id))
+      conn.commit()
 
-      await ctx.send(f"Your prefix is now {theprefix}")
+    await ctx.send(f"Your prefix is now {theprefix}")
 
   @commands.command(brief = 'shows people with administrator perms on the server', aliases =['mods', 'mod', 'admin', ])
   async def admins(self, ctx):
-      embed = discord.Embed(description = f'Admins on {ctx.guild.name}',color=0x00ff00)
-      for x in ctx.guild.members:
-        if x.guild_permissions.administrator:
-          embed.add_field(name = f'{x.display_name}', value = f"{x.name}#{x.discriminator}", inline = False)
-      await ctx.send(embed = embed)
+    embed = discord.Embed(description = f'Admins on {ctx.guild.name}',color=0x00ff00)
+    for x in ctx.guild.members:
+      if x.guild_permissions.administrator:
+        embed.add_field(name = f'{x.display_name}', value = f"{x.name}#{x.discriminator}", inline = False)
+    await ctx.send(embed = embed)
 
 
 
 
 def setup(bot):
-    bot.add_cog(User(bot))
-    bot.add_cog(Moderator(bot))
+  bot.add_cog(User(bot))
+  bot.add_cog(Moderator(bot))
