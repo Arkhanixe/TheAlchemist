@@ -44,19 +44,19 @@ class User:
 
   @commands.command(pass_context=True,brief="Lists Server Info | Usage: a!serverinfo | No Permission Limit")
   async def serverinfo(self,ctx):
-        '''Get the server info'''
-        guild = ctx.guild
-        embed = discord.Embed(title=f'''{guild}''', colour=discord.Colour.blue(), description='More Info Below', timestamp = datetime.datetime.utcnow())
-        embed.set_thumbnail(url=f'''{guild.icon_url}''')
-        embed.add_field(name='Server Created At :', value=f'''  {guild.created_at}''', inline=False)
-        embed.add_field(name='Created by :', value=f'''{guild.owner.mention}''',inline=False)
-        embed.add_field(name='Region :', value=f'''  {guild.region}''',inline=False)
-        embed.add_field(name='Server ID :', value=f'''<@{guild.id}>''',inline=False)
-        embed.add_field(name='Server Members :', value=f'''  {len(guild.members)}''', inline=False)
-        embed.add_field(name='Online Members :',value=f'''{len([I for I in guild.members if I.status is discord.Status.online])}''',inline=False)
-        embed.add_field(name='Server Channel :', value=f'''  {len(guild.channels)}''', inline=False)
-        await ctx.send(embed=embed)
-  
+    '''Get the server info'''
+    guild = ctx.guild
+    embed = discord.Embed(title=f'{guild.name}', colour=discord.Colour.blue(), description='More Info Below')
+    embed.set_thumbnail(url=f'{guild.icon_url}')
+    embed.add_field(name='Server Created At :', value=f'''  {guild.created_at.strftime('%B %d, %Y at %I:%M %p')}''', inline=False)
+    embed.add_field(name='Created by :', value=f'''{guild.owner.mention}''',inline=False)
+    embed.add_field(name='Region :', value=f'''  {guild.region}''',inline=False)
+    embed.add_field(name='Server ID :', value=f'''{guild.id}''',inline=False)
+    embed.add_field(name='Server Members :', value=f'''  {len(guild.members)}''', inline=False)
+    embed.add_field(name='Online Members :',value=f'''{len([I for I in guild.members if I.status is discord.Status.online])}''',inline=False)
+    embed.add_field(name='Server Channels :', value=f'''  {len(guild.channels)}''', inline=False)
+    await ctx.send(embed=embed)
+
   @commands.command(pass_context=True,brief="Lists User Info | Usage: a!user <user> | No Permission Limit")
   async def user(self, ctx, user: discord.Member):
       user = user or ctx.message.author
