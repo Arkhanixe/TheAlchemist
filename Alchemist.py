@@ -15,9 +15,9 @@ now = datetime.now()
 extensions = {
 "cogs.commands",
 #"cogs.REPL",
-#"cogs.help",
+"cogs.help",
 "cogs.emoji",
-'libneko.extras.help',
+#'libneko.extras.help',
 'libneko.extras.superuser'
 }   # add more here later
 

@@ -1,6 +1,27 @@
-#stolen from libneko ofc
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-
+# MIT License
+#
+# Copyright (c) 2018 Neko404NotFound
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in a$
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 import discord
 from discord.ext import commands as _commands
 
@@ -59,38 +80,11 @@ class Help:
         else:
             colour = other.random_colour()
         '''
-
-
-
-        '''
-
-
-
-
-
-
-
-
-
-
-        uncomment shit above if the bot doesnt work
-
-
-
-
-
-
-
-
-
-
-
-        '''
         title = f"`{cmd.qualified_name}` help page"
         if isinstance(cmd, _commands.Group):
             title = f"**[GROUP]** `{cmd.qualified_name}` help page"
         em = embeds.Embed(
-            title=title, description=cmd.brief, colour=0x36393f, timestamp=None
+            title=title, description=cmd.brief, color = 0x9842f4, timestamp=None
         )
         em.add_field(name="Usage", value=f"```md\n{prefix}{cmd.signature}```")
         em.add_field(
@@ -139,9 +133,9 @@ class Help:
                 else:
                     cursor = 0
             else:
-                colour = other.random_colour()'''
-            
-            page = embeds.Embed(title=title, colour=0x36393f, timestamp=None)
+                colour = other.random_colour()
+            '''
+            page = embeds.Embed(title=title, color = 0x9842f4, timestamp=None)
             quest = "\N{BLACK QUESTION MARK ORNAMENT}"
             page.set_author(
                 name=f"{quest} {ctx.bot.user.name}'s Commands {quest}",

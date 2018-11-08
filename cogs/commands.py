@@ -130,10 +130,10 @@ class User:
     members = 0
     total = 0
     for x in ctx.guild.members:
-     if x.bot == True:
+      if x.bot == True:
         bots += 1
         total += 1
-     else:
+      else:
         members += 1
         total += 1
     embed = discord.Embed(title="Server Member Count",color=0x0000FF)
