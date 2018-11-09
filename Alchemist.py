@@ -14,10 +14,10 @@ now = datetime.now()
 
 extensions = {
 "cogs.commands",
-#"cogs.REPL",
-"cogs.help",
-"cogs.emoji",
-#'libneko.extras.help',
+#Copyrighted of Libneko, can not use #"cogs.REPL",
+#Copyrighted of Linneko, can not use #"cogs.help",
+#Copyrighted of Libneko, can not use #"cogs.emoji",
+'libneko.extras.help',
 'libneko.extras.superuser'
 }   # add more here later
 
