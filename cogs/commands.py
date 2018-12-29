@@ -76,7 +76,7 @@ class User:
       embed = discord.Embed(title=f'{user.name}\'s Avatar', description=f'I think I found {user.name}\'s Avatar but can\'t be too sure ;) Here you go!', colour=discord.Colour(0x0bc5df))
       try:
         embed.set_image(url=user.avatar_url_as(format="gif")
-      else:
+      except:
         embed.set_image(url=user.avatar_url_as(format="png")
       await ctx.send(embed=embed)
 
