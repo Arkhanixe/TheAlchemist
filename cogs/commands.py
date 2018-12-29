@@ -67,14 +67,17 @@ class User:
       embed.add_field(name="Created At",value=user.created_at.strftime('%B %d, %Y %I:%M %p'), inline=True)
       embed.add_field(name="Joined at", value=user.joined_at.strftime('%B %d, %Y %I:%M %p'))
       embed.add_field(name="Highest role", value=user.top_role)
-      embed.set_thumbnail(url=user.avatar_url)
+      embed.set_thumbnail(url=user.avatar_url_as(format="png"))
       await ctx.send(embed=embed)
 
   @commands.command(pass_context=True,brief="Lists  User Avatar | Usage: a!avatar <user> | No Permission Limit")
   async def avatar(self,ctx, user : discord.Member = None):
       user = user or ctx.message.author
       embed = discord.Embed(title=f'{user.name}\'s Avatar', description=f'I think I found {user.name}\'s Avatar but can\'t be too sure ;) Here you go!', colour=discord.Colour(0x0bc5df))
-      embed.set_image(url=user.avatar_url)
+      try:
+        embed.set_image(url=user.avatar_url_as(format="gif")
+      else:
+        embed.set_image(url=user.avatar_url_as(format="png")
       await ctx.send(embed=embed)
 
   @commands.command(brief="Lists Support Server for making bots | Usage: a!server | No Permission Limit")
