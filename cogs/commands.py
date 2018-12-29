@@ -75,9 +75,9 @@ class User:
       user = user or ctx.message.author
       embed = discord.Embed(title=f'{user.name}\'s Avatar', description=f'I think I found {user.name}\'s Avatar but can\'t be too sure ;) Here you go!', colour=discord.Colour(0x0bc5df))
       try:
-        embed.set_image(url=user.avatar_url_as(format="gif")
+        embed.set_image(url=user.avatar_url_as(format="gif"))
       except:
-        embed.set_image(url=user.avatar_url_as(format="png")
+        embed.set_image(url=user.avatar_url_as(format="png"))
       await ctx.send(embed=embed)
 
   @commands.command(brief="Lists Support Server for making bots | Usage: a!server | No Permission Limit")
