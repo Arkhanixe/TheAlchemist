@@ -196,7 +196,7 @@ class Moderator:
 
   @commands.has_permissions(manage_messages=True)
   @commands.command(brief="Deletes X amount of messages | Usage: a!purge <# of messages> | Manage Messages Needed")
-    async def purge(self, ctx, msgs: int, members="everyone", *, txt=None):
+  async def purge(self, ctx, msgs: int, members="everyone", *, txt=None):
         await ctx.message.delete()
         member_object_list = []
         if members != "everyone":
