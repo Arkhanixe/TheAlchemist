@@ -196,14 +196,38 @@ class Moderator:
 
   @commands.has_permissions(manage_messages=True)
   @commands.command(brief="Deletes X amount of messages | Usage: a!purge <# of messages> | Manage Messages Needed")
-  async def purge(self,ctx, number: int = None):
+    async def purge(self, ctx, msgs: int, members="everyone", *, txt=None):
+        await ctx.message.delete()
+        member_object_list = []
+        if members != "everyone":
+            member_list = [x.strip() for x in members.split(",")]
+            for member in member_list:
+                if "@" in member:
+                    member = member[3 if "!" in member else 2:-1]
+                if member.isdigit():
+                    member_object = ctx.guild.get_member(int(member))
+                else:
+                    member_object = ctx.guild.get_member_named(member)
+                if not member_object:
+                    return await ctx.send("Invalid user.",delete_after=15)
+                else:
+                    member_object_list.append(member_object)
 
-    
-    deleted = await ctx.channel.purge(
-      limit = number + 1
-      )
+        if msgs < 10000:
+            async for message in ctx.message.channel.history(limit=msgs):
+                try:
+                    if txt:
+                        if not txt.lower() in message.content.lower():
+                            continue
+                    if member_object_list:
+                        if not message.author in member_object_list:
+                            continue
 
-    await ctx.send(f'Deleted {len(deleted)} message(s)', delete_after=15)
+                    await message.delete()
+                except discord.Forbidden:
+                    await ctx.send("I do not have permission to delete other users' messages.",delete_after=15)
+        else:
+            await ctx.send('Too many messages to delete. Enter a number < 10000',delete_after=15)
 
 
   @commands.has_permissions(ban_members=True)
