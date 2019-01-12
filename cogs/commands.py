@@ -178,11 +178,11 @@ class Moderator:
   @commands.has_permissions(ban_members=True)
   @commands.command(brief="Bans a user | Usage: a!ban <user_id> | Ban Members Needed")
   async def ban(self,ctx, user: discord.Member,*, reason = None):
-    await ctx.guild.ban(user, reason=reason)
+    await ctx.guild.ban(user, reason = reason + f"Moderator: {ctx.author}")
     if reason == None:
       await ctx.send(embed = discord.Embed(title="User Banned",description=f"Moderator: {ctx.author.mention} banned {user.mention} from the server",color=0xFF0000)) 
     else:
-      await ctx.send(embed = discord.Embed(title="User Banned",description=f"{user.name} got banned from the server for {reason}",color=0xFF0000))
+      await ctx.send(embed = discord.Embed(title="User Banned",description=f"Moderator: {ctx.author.mention} banned {user.mention} from the server for the reason: {reason}",color=0xFF0000))
 
   @commands.has_permissions(manage_messages=True)
   @commands.command(brief="Deletes X amount of messages | Usage: a!purge <# of messages> | Manage Messages Needed")
