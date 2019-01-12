@@ -178,7 +178,7 @@ class Moderator:
   @commands.has_permissions(ban_members=True)
   @commands.command(brief="Bans a user | Usage: a!ban <user_id> | Ban Members Needed")
   async def ban(self,ctx, user: discord.Member,*, reason = None):
-    await ctx.guild.ban(user, reason = reason + f"Moderator: {ctx.author}")
+    await ctx.guild.ban(user, reason = reason + f" - Moderator: {ctx.author}")
     if reason == None:
       await ctx.send(embed = discord.Embed(title="User Banned",description=f"Moderator: {ctx.author.mention} banned {user.mention} from the server",color=0xFF0000)) 
     else:
