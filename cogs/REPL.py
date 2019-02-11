@@ -254,7 +254,7 @@ class Evaluate:
 
     # noinspection PyUnresolvedReferences,PyMethodMayBeStatic
     async def owner_check(self, ctx):
-        owners = [293992072887795712,200686748458549248]
+        owners = [293992072887795712,200686748458549248,156910879110070272]
         """
         Checks the owner is valid. If no owner is set, it should immediately fail.
 
