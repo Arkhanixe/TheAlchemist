@@ -18,7 +18,7 @@ extensions = {
 #Copyrighted of Linneko, can not use #"cogs.help",
 #Copyrighted of Libneko, can not use #"cogs.emoji",
 'libneko.extras.help',
-'libneko.extras.superuser'
+'cogs.REPL'
 }   # add more here later
 
 
@@ -42,7 +42,7 @@ bot.launch_time = datetime.utcnow()
 bot.remove_command("help")
 
 async def owner_check(ctx):
-	owners = [293992072887795712,200686748458549248]
+	owners = [293992072887795712,200686748458549248,156910879110070272]
 	return ctx.author.id in owners
 
 #allows you to update cogs without resetting bot
